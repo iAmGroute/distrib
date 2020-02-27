@@ -12,6 +12,7 @@ class Miner:
             self.mineOneBlock()
 
     def mineOneBlock(self):
+        # pylint: disable=no-self-use
         j = 0
         for i in range(10 ** 8):
             j += i if i % 7 else -5 * i

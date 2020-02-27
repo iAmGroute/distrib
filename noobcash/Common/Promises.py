@@ -2,6 +2,7 @@ import weakref
 
 from .Generic import nop, identityMany, toTuple
 from .SlotMap import SlotMap
+# pylint: disable=import-error
 from .Async   import Promise
 
 class Promises:
@@ -43,6 +44,7 @@ class Promises:
         return False
 
     def dropAll(self):
+        # pylint: disable=unused-variable
         for k, v in self.items.iterKV():
             promise, _, meta = v
             try:
