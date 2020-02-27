@@ -10,4 +10,5 @@ disable=
     too-many-locals,
     too-many-statements,
     global-statement,
-    no-else-return
+    no-else-return,
+    fixme

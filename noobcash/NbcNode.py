@@ -12,7 +12,7 @@ class NbcNode:
         self.host       = host
         self.port       = port
         self.neighbors  = SlotMap()
-        self.blockchain = Blockchain.load('blockchain.txt')
+        self.blockchain = Blockchain('blockchain.txt')
         self.loop       = None
 
     def runForever(self):

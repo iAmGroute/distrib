@@ -30,7 +30,7 @@ def status():
 @hug.get()
 def save():
     global node
-    node.blockchain.dump('blockchain.txt')
+    node.blockchain.save()
     return {'result': True}
 
 @hug.get()
