@@ -1,0 +1,13 @@
+
+[MESSAGES CONTROL]
+
+disable=
+    C,
+    too-few-public-methods,
+    duplicate-code,
+    too-many-function-args,
+    too-many-arguments,
+    too-many-locals,
+    too-many-statements,
+    global-statement,
+    no-else-return
