@@ -26,6 +26,11 @@ def main(host, port):
     threading.Thread(target=miner.runForever, args=(), daemon=True).start()
 
 
+# Configure HUG to serve the static files found in '/webui'
+@hug.static('/')
+def staticFilesDir():
+    return ('./webui',)
+
 # As for the API, we will route it all below '/api',
 # so the rest of '/' will be the webui pages.
 hug.API(__name__).extend(NbcAPI, '/api')
