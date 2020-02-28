@@ -1,5 +1,11 @@
 <script>
-	let name = 'world';
+    import Navbar  from './Navbar.svelte';
+    import Sidebar from './Sidebar.svelte';
+    import Page    from './Page.svelte';
+    import Footer  from './Footer.svelte';
 </script>
 
-<h1>Hello {name}!</h1>
+<Navbar></Navbar>
+<Sidebar></Sidebar>
+<Page></Page>
+<Footer></Footer>
