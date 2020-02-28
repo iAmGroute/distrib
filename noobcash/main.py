@@ -26,10 +26,10 @@ def main(host, port):
     threading.Thread(target=miner.runForever, args=(), daemon=True).start()
 
 
-# Configure HUG to serve the static files found in '/webui'
+# Configure HUG to serve the static files found in '../webui/public'
 @hug.static('/')
 def staticFilesDir():
-    return ('./webui',)
+    return ('../webui/public',)
 
 # As for the API, we will route it all below '/api',
 # so the rest of '/' will be the webui pages.

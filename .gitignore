@@ -1,3 +1,5 @@
+# --- Python
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -123,3 +125,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# --- Web
+
+# Node
+node_modules/
+package-lock.json
+
+.DS_Store
+
