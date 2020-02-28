@@ -7,27 +7,33 @@ from NeighborRPC import handlers, requests
 
 class Neighbor:
 
-    def __init__(self, node, myID, link):
+    def __init__(self, node, myID, link, peerName):
         self.node        = node
         self.myID        = myID
         self.link        = link
         link.higherP     = self
+        self.peerName    = peerName
         self.connected   = True
         self.lastBlockID = 0
         self.futures     = SlotMap()
 
     def destroy(self):
-        print('Destoy')
+        print('Destroy')
         if not self.connected:
             return
         self.connected = False
         for future in self.futures:
             future.cancel()
         self.futures.deleteAll()
+        self.node.removeMe(self.myID)
 
     def disconnected(self):
         print('Disconnected')
         self.destroy()
+
+    def disconnect(self):
+        print('Disconnecting')
+        self.link.disconnect()
 
     def packetReceived(self, packet):
         print('Received packet:', packet)

@@ -1,6 +1,7 @@
 
 import asyncio
 
+from Common.Generic  import find
 from Common.SlotMap  import SlotMap
 from NetworkProtocol import NetworkProtocol
 from Neighbor        import Neighbor
@@ -14,6 +15,9 @@ class NbcNode:
         self.neighbors  = SlotMap()
         self.blockchain = Blockchain('blockchain.txt')
         self.loop       = None
+
+    def removeMe(self, neighborID):
+        del self.neighbors[neighborID]
 
     def runForever(self):
         self.loop = asyncio.new_event_loop()
@@ -38,7 +42,10 @@ class NbcNode:
     def newConnectionMade(self, link):
         peerName = link.transport.get_extra_info('peername')
         print('New connection:', peerName)
-        neighbor      = Neighbor(self, -1, link)
+        existingNeighbor = find(self.neighbors, lambda item: item.peerName == peerName)
+        if existingNeighbor is not None:
+            existingNeighbor.disconnect()
+        neighbor      = Neighbor(self, -1, link, peerName)
         neighbor.myID = self.neighbors.append(neighbor)
 
     async def main(self):
