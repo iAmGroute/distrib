@@ -132,5 +132,7 @@ dmypy.json
 node_modules/
 package-lock.json
 
+.env.js
+
 .DS_Store
 

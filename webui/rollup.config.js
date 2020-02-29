@@ -1,3 +1,5 @@
+import env from './.env.js';
+import replace from '@rollup/plugin-replace';
 import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -5,6 +7,15 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 
 const production = !process.env.ROLLUP_WATCH;
+
+function processEnv(env) {
+	let result = {};
+	for (const k in env) {
+		const v = env[k];
+		result['env.' + k] = JSON.stringify(v);
+	}
+	return result
+}
 
 export default {
 	input: 'src/main.js',
@@ -15,6 +26,7 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
+		replace(processEnv(env)),
 		svelte({
 			// enable run-time checks when not in production
 			dev: !production,
