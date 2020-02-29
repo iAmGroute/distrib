@@ -1,4 +1,3 @@
-import env from './.env.js';
 import replace from '@rollup/plugin-replace';
 import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
@@ -7,6 +6,9 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 
 const production = !process.env.ROLLUP_WATCH;
+
+const env     = require(production ? './env.js' : './env_dev.js').env;
+const rootDir = production ? 'public/' : 'dev/';
 
 function processEnv(env) {
 	let result = {};
@@ -23,7 +25,7 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'public/build/bundle.js'
+		file: rootDir + 'build/bundle.js'
 	},
 	plugins: [
 		replace(processEnv(env)),
@@ -33,7 +35,7 @@ export default {
 			// we'll extract any component CSS out into
 			// a separate file - better for performance
 			css: css => {
-				css.write('public/build/bundle.css');
+				css.write(rootDir + 'build/bundle.css');
 			}
 		}),
 
@@ -52,9 +54,9 @@ export default {
 		// the bundle has been generated
 		!production && serve(),
 
-		// Watch the `public` directory and refresh the
+		// Watch the `dev` directory and refresh the
 		// browser on changes when not in production
-		!production && livereload('public'),
+		!production && livereload('dev'),
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
