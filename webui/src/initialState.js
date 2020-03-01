@@ -1,9 +1,5 @@
 
 const initialState = {
-    route: {
-        url: "/",
-        location: ["/"]
-    },
     content: {}
 };
 

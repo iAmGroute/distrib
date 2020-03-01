@@ -1,8 +1,11 @@
+<script>
+  import active from 'svelte-spa-router/active';
+</script>
 
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
-  <a href="index.html" class="brand-link">
+  <a href="/" class="brand-link">
     <img src="dist/img/logo.png" class="brand-image">
     <span class="brand-text">Noobcash</span>
   </a>
@@ -11,25 +14,25 @@
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column">
         <li class="nav-item">
-          <a href="#" class="nav-link active">
+          <a href="#/status" use:active class="nav-link">
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>Status</p>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="#/wallet" use:active class="nav-link">
             <i class="nav-icon fas fa-wallet"></i>
             <p>Wallet</p>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="#/network" use:active class="nav-link">
             <i class="nav-icon fas fa-network-wired"></i>
             <p>Network</p>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="#/example" use:active class="nav-link">
             <i class="nav-icon fas fa-th"></i>
             <p>
               Example
