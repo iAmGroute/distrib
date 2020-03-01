@@ -3,9 +3,10 @@ import Refresher from "./Refresher.js";
 
 class Sync
 {
-    constructor(onUpdate)
+    constructor(onUpdate, onError)
     {
         this.onUpdate   = onUpdate;
+        this.onError    = onError;
         this.pending    = 0;
         this.maxPending = 5;
         this.refresher  = new Refresher(() => this.refresh(), 500);
@@ -23,7 +24,7 @@ class Sync
             }
             catch (error) {
                 this.refresher.setEvery(7500);
-                console.warn(error);
+                this.onError(error);
             }
             finally {
                 this.pending -= 1;

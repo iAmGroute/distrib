@@ -7,7 +7,13 @@
 
     export let state;
 
-    const sync = new Sync(data => {state.content.status = data});
+    const sync = new Sync(data => {
+        state.isLive = true;
+        state.content.status = data;
+    },
+    error => {
+        state.isLive = false;
+    });
 </script>
 
 <Navbar  {state}/>
