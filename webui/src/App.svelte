@@ -1,14 +1,16 @@
 <script>
+    import Sync    from "./Sync.js";
     import Navbar  from './Navbar.svelte';
     import Sidebar from './Sidebar.svelte';
     import Page    from './Page.svelte';
     import Footer  from './Footer.svelte';
-    import { get } from "./api.js";
+
     export let state;
-    get('status').then(console.log);
+
+    const sync = new Sync(data => {state.content.status = data});
 </script>
 
-<Navbar></Navbar>
-<Sidebar></Sidebar>
-<Page></Page>
-<Footer></Footer>
+<Navbar  state={state}/>
+<Sidebar state={state}/>
+<Page    state={state}/>
+<Footer  state={state}/>

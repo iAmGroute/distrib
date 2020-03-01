@@ -12,6 +12,12 @@
       <ul class="nav nav-pills nav-sidebar flex-column">
         <li class="nav-item">
           <a href="#" class="nav-link active">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>Status</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
             <i class="nav-icon fas fa-wallet"></i>
             <p>Wallet</p>
           </a>
