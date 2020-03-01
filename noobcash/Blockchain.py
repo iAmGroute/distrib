@@ -22,7 +22,10 @@ class Blockchain:
                         break
                     if not line.startswith('> '):
                         continue
-                    data = json.loads(line[2:])
+                    try:
+                        data = json.loads(line[2:])
+                    except json.JSONDecodeError:
+                        break
                     self.addBlock(Block.fromJson(data['b']))
             return True
         except FileNotFoundError:
