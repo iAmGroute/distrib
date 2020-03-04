@@ -15,9 +15,9 @@ api = hug.API(__name__)
 api.http.add_middleware(hug.middleware.CORSMiddleware(api, max_age=10))
 
 
-def main(host, port):
+def main(host, port, blockchainFile):
     # Init the Node (server), the Miner and the REST API (user interface)
-    node  = NbcNode(host, port)
+    node  = NbcNode(host, port, blockchainFile)
     miner = Miner(node)
     NbcAPI.init(node)
     # The Node, Miner and API part must run concurrently,
@@ -38,5 +38,5 @@ hug.API(__name__).extend(NbcAPI, '/api')
 
 # Arguements come from config file (can't use sys.argv)
 config = json.loads(open('config.json').read())
-main(config['host'], config['port'])
+main(config['host'], config['port'], config['blockchainFile'])
 

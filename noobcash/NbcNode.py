@@ -9,11 +9,11 @@ from Blockchain      import Blockchain
 
 class NbcNode:
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, blockchainFile):
         self.host       = host
         self.port       = port
         self.neighbors  = SlotMap()
-        self.blockchain = Blockchain('blockchain.txt')
+        self.blockchain = Blockchain(blockchainFile)
         self.loop       = None
 
     def removeMe(self, neighborID):
