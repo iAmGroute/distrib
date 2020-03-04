@@ -1,14 +1,16 @@
 <script>
   import {location, replace} from 'svelte-spa-router';
-  import Status from './pages/Status.svelte';
-  import Wallet from './pages/Wallet.svelte';
+  import Status  from './pages/Status.svelte';
+  import Wallet  from './pages/Wallet.svelte';
+  import Connect from './pages/Connect.svelte';
 
   export let state;
 
   const pages = {
-    '/':       [null, null],
-    '/status': [Status, 'Status'],
-    '/wallet': [Wallet, 'Wallet']
+    '/':        [null, null],
+    '/status':  [Status,  'Status'],
+    '/wallet':  [Wallet,  'Wallet'],
+    '/connect': [Connect, 'Connect']
   };
 
   let [pageComponent, pageTitle] = pages['/status'];

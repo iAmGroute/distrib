@@ -3,7 +3,7 @@
 </script>
 
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar sidebar-dark-primary">
   <!-- Brand Logo -->
   <a href="/" class="brand-link">
     <img src="dist/img/logo.png" class="brand-image">
@@ -29,6 +29,12 @@
           <a href="#/network" use:active class="nav-link">
             <i class="nav-icon fas fa-network-wired"></i>
             <p>Network</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#/connect" use:active class="nav-link">
+            <i class="nav-icon fas fa-plug"></i>
+            <p>Connect</p>
           </a>
         </li>
         <li class="nav-item">
