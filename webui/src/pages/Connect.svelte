@@ -2,27 +2,33 @@
   import { get } from '../api.js';
 
   let canClick = true;
-  let lines = '';
-  let btnText = 'Connect';
+  let lines    = '';
+  let btnText  = 'Connect';
   let btnClass = 'btn-primary';
 
   async function handleClick(event) {
     if (!canClick) return;
     canClick = false;
     try {
-      window.lines = lines;
       btnText  = 'Connecting';
       btnClass = 'btn-warning';
+      let count = 0;
       for (const line of lines.split('\n')) {
         const pos = line.lastIndexOf(':');
         if (pos < 0) continue;
         const host = line.slice(0, pos);
         const port = line.slice(pos + 1);
-        console.log(host, port);
+        count += 1;
         await get('connectToNeighbor', {host, port});
       }
-      btnText  = 'Will connect';
-      btnClass = 'btn-success';
+      if (count) {
+        btnText  = `Will connect to ${count} neighbors`;
+        btnClass = 'btn-success';
+      }
+      else {
+        btnText  = 'Connect';
+        btnClass = 'btn-primary';
+      }
     }
     catch (error) {
       btnText  = 'Connect failed';

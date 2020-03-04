@@ -25,6 +25,9 @@ class NbcNode:
         self.loop.create_task(self.main())
         self.loop.run_forever()
 
+    def runAsync(self, coroutine):
+        self.loop.create_task(coroutine)
+
     async def runServer(self):
         await self.loop.create_server(
             lambda: NetworkProtocol(self.newConnectionMade),
@@ -33,11 +36,11 @@ class NbcNode:
         )
         print('Server running')
 
-    def connectToNeighbor(self, host, port):
-        self.loop.create_task(self.loop.create_connection(
+    async def connectToNeighbor(self, host, port):
+        await self.loop.create_connection(
             lambda: NetworkProtocol(self.newConnectionMade),
             host=host, port=port
-        ))
+        )
 
     def newConnectionMade(self, link):
         peerName = link.transport.get_extra_info('peername')
