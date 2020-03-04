@@ -7,7 +7,7 @@ class Refresher
         this.every      = every;
         this.intervalID = 0;
         this.active     = false;
-        document.addEventListener("visibilitychange", () => this.handleVisibilityChange);
+        document.addEventListener('visibilitychange', () => this.handleVisibilityChange());
     }
 
     handleVisibilityChange()
