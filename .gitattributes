@@ -2,3 +2,4 @@
 * text=auto
 webui/public/dist/* linguist-generated=true linguist-vendored
 webui/public/build/* linguist-generated=true linguist-vendored
+webui/public/plugins/* linguist-generated=true linguist-vendored
