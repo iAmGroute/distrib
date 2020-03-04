@@ -1,16 +1,19 @@
 <script>
   import {location, replace} from 'svelte-spa-router';
+  import Home    from './pages/Home.svelte';
   import Status  from './pages/Status.svelte';
   import Wallet  from './pages/Wallet.svelte';
   import Connect from './pages/Connect.svelte';
+  import Network from './pages/Network.svelte';
 
   export let state;
 
   const pages = {
-    '/':        [null, null],
+    '/':        [Home,     null],
     '/status':  [Status,  'Status'],
     '/wallet':  [Wallet,  'Wallet'],
-    '/connect': [Connect, 'Connect']
+    '/connect': [Connect, 'Connect'],
+    '/network': [Network, 'Network']
   };
 
   let [pageComponent, pageTitle] = pages['/status'];
@@ -21,9 +24,10 @@
   }
 
   location.subscribe(v => {
-    console.log(v);
-    for (const expr in pages) if (expr === v) return setPage(pages[expr]);
-    replace('/');
+    const page = pages[v];
+    console.log(v, page);
+    if (page) setPage(page);
+    else      replace('/');
   });
 </script>
 
