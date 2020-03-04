@@ -1,4 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-webui/public/dist/* linguist-vendored
-webui/public/build/* linguist-generated
+webui/public/dist/* linguist-generated=true linguist-vendored
+webui/public/build/* linguist-generated=true linguist-vendored
