@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiURL = "http://" + env.SERVER_NAME + "/api/";
+const apiURL = env.API_URL;
 
 export async function get(path, params)
 {
