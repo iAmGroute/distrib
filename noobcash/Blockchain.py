@@ -26,7 +26,7 @@ class Blockchain:
                         data = json.loads(line[2:])
                     except json.JSONDecodeError:
                         break
-                    self.addBlock(Block.fromJson(data['b']))
+                    self._addBlock(Block.fromJson(data['b']))
             return True
         except FileNotFoundError:
             return False
@@ -41,9 +41,14 @@ class Blockchain:
                 f.write('\n> ' + (json.dumps(data)))
             f.write('\n')
 
-    def addBlock(self, block):
+    def _addBlock(self, block):
         # TODO: validate
         self.blocks.append(block)
-        self.save()
         return True
+
+    def addBlock(self, block):
+        ok = self._addBlock(block)
+        if ok:
+            self.save()
+        return ok
 
