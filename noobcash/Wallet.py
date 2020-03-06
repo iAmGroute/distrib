@@ -2,7 +2,7 @@
 class Wallet:
 
     def __init__(self, nbc, keyFile):
-        self.nbc    = nbc
+        self.nbc     = nbc
         self.keyFile = keyFile
         self.pubkey  = None
         self.privkey = None

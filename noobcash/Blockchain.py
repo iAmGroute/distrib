@@ -8,6 +8,7 @@ class Blockchain:
     def __init__(self, filename):
         self.filename = filename
         self.blocks   = []
+        self.utxos    = {} # address -> list of (tx, amount)
         self.loaded   = self.load()
         # TODO: remove
         if len(self.blocks) == 0:
@@ -51,4 +52,14 @@ class Blockchain:
         if ok:
             self.save()
         return ok
+
+    def getUTXOs(self, address):
+        utxos = self.utxos.get(address)
+        if utxos is None: return None
+        else: return utxos.copy()
+
+    def getBalance(self, address):
+        utxos = self.getUTXOs(address)
+        if utxos is None: return 0
+        else: return sum([amount for tx, amount in utxos])
 
