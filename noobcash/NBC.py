@@ -7,4 +7,5 @@ class NBC:
     def __init__(self, blockchainFile, keyFile):
         self.blockchain = Blockchain(blockchainFile)
         self.wallet     = Wallet(self, keyFile)
+        self.node       = None
 

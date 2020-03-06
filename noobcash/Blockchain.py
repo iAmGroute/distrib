@@ -54,12 +54,10 @@ class Blockchain:
         return ok
 
     def getUTXOs(self, address):
-        utxos = self.utxos.get(address)
-        if utxos is None: return None
-        else: return utxos.copy()
+        utxos = self.utxos.get(address, [])
+        return utxos.copy()
 
     def getBalance(self, address):
         utxos = self.getUTXOs(address)
-        if utxos is None: return 0
-        else: return sum([amount for tx, amount in utxos])
+        return sum([amount for tx, amount in utxos])
 

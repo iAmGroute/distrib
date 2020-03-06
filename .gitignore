@@ -139,4 +139,4 @@ env_dev.js
 .DS_Store
 
 # Noobcash data
-.pem
+*.pem

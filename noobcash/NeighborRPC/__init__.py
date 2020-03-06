@@ -1,7 +1,7 @@
 
 import importlib
 
-import GetLatestBlockID
+from . import GetLatestBlockID
 
 modules = [
     GetLatestBlockID
