@@ -2,49 +2,41 @@
   export let state;
 </script>
 
-<div class="col-lg-6">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <p class="card-text">
-        Some quick example text to build on the card title and make up the bulk of the card's
-        content.
-      </p>
-      <a href="#" class="card-link">Card link</a>
-      <a href="#" class="card-link">Another link</a>
-    </div>
-  </div>
+<div class="col-lg-3">
   <div class="card card-primary card-outline">
+    <div class="card-header">
+      <h5 class="m-0">Balance</h5>
+    </div>
     <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <p class="card-text">
-        Some quick example text to build on the card title and make up the bulk of the card's
-        content.
-      </p>
-      <a href="#" class="card-link">Card link</a>
-      <a href="#" class="card-link">Another link</a>
+      <h6 class="card-title">{state.content.status.balance} NBC</h6>
     </div>
   </div>
 </div>
-<div class="col-lg-6">
-  <div class="card">
+
+<div class="col-lg-9">
+  <div class="card card-primary">
     <div class="card-header">
-      <h5 class="m-0">Featured</h5>
+      <h5 class="m-0">Unspent transaction outputs</h5>
     </div>
-    <div class="card-body">
-      <h6 class="card-title">Special title treatment</h6>
-      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
-    </div>
-  </div>
-  <div class="card card-primary card-outline">
-    <div class="card-header">
-      <h5 class="m-0">Featured</h5>
-    </div>
-    <div class="card-body">
-      <h6 class="card-title">Special title treatment</h6>
-      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
+    <div class="card-body p-0">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Transaction hash</th>
+            <th>Amount (NBC)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each state.content.status.utxos as [txHash, amount], i}
+            <tr>
+              <td>{i}</td>
+              <td><a href="#/tx/{txHash}">{txHash}</a></td>
+              <td>{amount}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

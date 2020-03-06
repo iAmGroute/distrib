@@ -6,13 +6,19 @@
 <aside class="main-sidebar sidebar-dark-primary">
   <!-- Brand Logo -->
   <a href="/" class="brand-link">
-    <img src="dist/img/logo.png" class="brand-image">
+    <img src="dist/img/logo.png" alt="logo" class="brand-image">
     <span class="brand-text">Noobcash</span>
   </a>
   <!-- Sidebar -->
   <div class="sidebar">
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column">
+        <li class="nav-item">
+          <a href="#/" use:active class="nav-link">
+            <i class="nav-icon fas fa-home"></i>
+            <p>Home</p>
+          </a>
+        </li>
         <li class="nav-item">
           <a href="#/status" use:active class="nav-link">
             <i class="nav-icon fas fa-tachometer-alt"></i>
