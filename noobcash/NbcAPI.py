@@ -26,7 +26,7 @@ def status():
             for block in nbc.blockchain.blocks
         ],
         'utxos': [
-            (tx.thisHash, amount)
+            (tx.thisHash.hex(), amount)
             for tx, amount in nbc.wallet.getUTXOs()
         ],
         'balance': nbc.wallet.getBalance()
