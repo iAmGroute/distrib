@@ -1,14 +1,14 @@
 # Get the latest block ID of our neighbor.
-# `self` is instance of `Neighbor`
+# `self` is instance of `NeighborRPC`
 
 CMD = b'GLBID...'
 
 def request(self):
-    return self.sendRequest(CMD, b'')
+    return self.neighbor.sendRequest(CMD, b'')
 
 def respond(self, data):
     assert len(data) == 0
-    lastBlockID = len(self.node.blockchain.blocks) - 1
+    lastBlockID = len(self.nbc.blockchain.blocks) - 1
     reply = lastBlockID.to_bytes(8, 'little')
     return reply
 

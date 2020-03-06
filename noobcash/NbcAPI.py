@@ -1,41 +1,42 @@
 
 import hug
 
-node = None
+nbc = None
 
-def init(myNode):
-    global node
-    node = myNode
+def init(nbcInstance):
+    global nbc
+    nbc = nbcInstance
 
 @hug.get()
 def status():
-    global node
+    global nbc
     resp = {
-        'host': node.host,
-        'port': node.port,
+        'host': nbc.node.host,
+        'port': nbc.node.port,
         'neighbors': [
             {
                 'connected':   neighbor.connected,
-                'lastBlockID': neighbor.lastBlockID
+                'lastBlockID': neighbor.lastBlockID,
+                'peerName':    neighbor.peerName
             }
-            for neighbor in node.neighbors
+            for neighbor in nbc.node.neighbors
         ],
         'blockchain': [
             block.toJson()
-            for block in node.blockchain.blocks
+            for block in nbc.blockchain.blocks
         ]
     }
     return resp
 
 @hug.get()
 def save():
-    global node
-    node.blockchain.save()
+    global nbc
+    nbc.blockchain.save()
     return {'result': True}
 
 @hug.get()
 def connectToNeighbor(host:str, port:int):
-    global node
-    node.runAsync(node.connectToNeighbor(host, port))
+    global nbc
+    nbc.node.runAsync(nbc.node.connectToNeighbor(host, port))
     return {'result': True}
 

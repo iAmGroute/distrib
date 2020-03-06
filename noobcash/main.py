@@ -6,8 +6,9 @@ import threading
 
 import NbcAPI
 
-from NbcNode import NbcNode
-from Miner   import Miner
+from NBC   import NBC
+from Node  import Node
+from Miner import Miner
 
 
 # Configure HUG to send CORS header
@@ -15,11 +16,14 @@ api = hug.API(__name__)
 api.http.add_middleware(hug.middleware.CORSMiddleware(api, max_age=10))
 
 
-def main(host, port, blockchainFile):
-    # Init the Node (server), the Miner and the REST API (user interface)
-    node  = NbcNode(host, port, blockchainFile)
-    miner = Miner(node)
-    NbcAPI.init(node)
+def main(host, port, blockchainFile, keyFile):
+    # Init the app-specific parts (blockchain, wallet and miner)
+    nbc   = NBC(blockchainFile, keyFile)
+    miner = Miner(nbc)
+    # Init the REST API (user interface)
+    NbcAPI.init(nbc)
+    # Init the Node (server)
+    node  = Node(host, port, nbc)
     # The Node, Miner and API part must run concurrently,
     # so we run each in its own thread.
     threading.Thread(target=node.runForever,  args=(), daemon=True).start()
@@ -38,5 +42,5 @@ hug.API(__name__).extend(NbcAPI, '/api')
 
 # Arguements come from config file (can't use sys.argv)
 config = json.loads(open('config.json').read())
-main(config['host'], config['port'], config['blockchainFile'])
+main(config['host'], config['port'], config['blockchainFile'], config['keyFile'])
 

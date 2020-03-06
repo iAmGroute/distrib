@@ -3,19 +3,19 @@ import asyncio
 
 from Common.SlotMap import SlotMap
 
-from NeighborRPC import handlers, requests
+from NeighborRPC import NeighborRPC
 
 class Neighbor:
 
     def __init__(self, node, myID, link, peerName):
-        self.node        = node
-        self.myID        = myID
-        self.link        = link
-        link.higherP     = self
-        self.peerName    = peerName
-        self.connected   = True
-        self.lastBlockID = 0
-        self.futures     = SlotMap()
+        self.node      = node
+        self.myID      = myID
+        self.link      = link
+        link.higherP   = self
+        self.peerName  = peerName
+        self.connected = True
+        self.futures   = SlotMap()
+        self.rpc       = NeighborRPC(self)
 
     def destroy(self):
         print('Destroy')
@@ -50,11 +50,9 @@ class Neighbor:
         flags   = packet[ 4: 8]
         cmd     = packet[ 8:16]
         data    = packet[16:]
-        handler = handlers.get(cmd)
-        assert handler
         isReply = flags == b'R...'
         if not isReply:
-            ret = handler.respond(self, data)
+            ret = self.rpc.respond(cmd, data)
             if ret is None:
                 reply = None
             else:
@@ -68,7 +66,7 @@ class Neighbor:
             if future:
                 del self.futures[reqID]
                 try:
-                    ret = handler.process(self, data)
+                    ret = self.rpc.process(cmd, data)
                 except AssertionError:
                     future.cancel()
                 else:
@@ -95,7 +93,3 @@ class Neighbor:
             packet += data
             self.link.sendPacket(packet)
         return f
-
-    def getLatestBlockID(self):
-        return requests['getLatestBlockID'](self)
-

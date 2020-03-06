@@ -5,16 +5,15 @@ from Common.Generic  import find
 from Common.SlotMap  import SlotMap
 from NetworkProtocol import NetworkProtocol
 from Neighbor        import Neighbor
-from Blockchain      import Blockchain
 
-class NbcNode:
+class Node:
 
-    def __init__(self, host, port, blockchainFile):
-        self.host       = host
-        self.port       = port
-        self.neighbors  = SlotMap()
-        self.blockchain = Blockchain(blockchainFile)
-        self.loop       = None
+    def __init__(self, host, port, nbc):
+        self.host      = host
+        self.port      = port
+        self.nbc       = nbc
+        self.neighbors = SlotMap()
+        self.loop      = None
 
     def removeMe(self, neighborID):
         del self.neighbors[neighborID]
