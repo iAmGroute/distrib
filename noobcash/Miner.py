@@ -27,6 +27,6 @@ class Miner:
         for i in range(random.randrange(1, 11) * (10 ** 7)):
             j += i if i % 7 else -5 * i
         b.thisHash  = (j & 0xFFFFFFFF).to_bytes(4, 'little')
-        self.nbc.blockchain.addBlock(b)
-        print('Mined block', b.myID)
+        ok = self.nbc.blockchain.addBlock(b)
+        print('Mined block', b.myID, 'valid' if ok else 'stale')
 

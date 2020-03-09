@@ -43,9 +43,12 @@ class Blockchain:
             f.write('\n')
 
     def _addBlock(self, block):
-        # TODO: validate
-        self.blocks.append(block)
-        return True
+        last = self.blocks[-1]
+        if block.myID == last.myID + 1 and block.prevHash == last.thisHash:
+            self.blocks.append(block)
+            return True
+        else:
+            return False
 
     def addBlock(self, block):
         ok = self._addBlock(block)
