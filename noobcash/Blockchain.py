@@ -56,6 +56,9 @@ class Blockchain:
             self.save()
         return ok
 
+    def getLastBlockID(self):
+        return len(self.blocks) - 1
+
     def getUTXOs(self, address):
         utxos = self.utxos.get(address, [])
         return utxos.copy()
