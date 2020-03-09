@@ -38,7 +38,7 @@ class NeighborRPC:
     def getBlockHeaders(self):
         return GetBlockHeaders.request(self)
 
-    def setLatestBlockID(self, lastBlockID):
+    def setLastBlockID(self, lastBlockID):
         self.lastBlockID = lastBlockID
         # self.nbc.foundBlockID(self, lastBlockID)
 
