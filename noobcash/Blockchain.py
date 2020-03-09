@@ -61,3 +61,7 @@ class Blockchain:
         utxos = self.getUTXOs(address)
         return sum([amount for tx, amount in utxos])
 
+    def getBlocks(self):
+        # Returns a (new) list of the current blockchain's blocks
+        return self.blocks.copy()
+

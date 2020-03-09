@@ -41,3 +41,16 @@ class Block:
         ]
         return data
 
+    def getHeaderBytes(self):
+        res  = self.myID.to_bytes(8, 'little')
+        res += self.nonce
+        res += self.thisHash
+        res += self.prevHash
+        return res
+
+    def setHeaderBytes(self, data):
+        self.myID     = int.from_bytes(data[ 0: 8], 'little')
+        self.nonce    = data[ 8:12]
+        self.thisHash = data[12:16]
+        self.prevHash = data[16:20]
+

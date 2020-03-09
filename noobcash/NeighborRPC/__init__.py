@@ -2,9 +2,11 @@
 import importlib
 
 from . import AdvLatestBlockID
+from . import GetBlockHeaders
 
 modules = [
     AdvLatestBlockID,
+    GetBlockHeaders,
 ]
 handlers = {m.CMD: m for m in modules}
 
@@ -33,5 +35,10 @@ class NeighborRPC:
     def advLatestBlockID(self):
         return AdvLatestBlockID.request(self)
 
+    def getBlockHeaders(self):
+        return GetBlockHeaders.request(self)
+
     def setLatestBlockID(self, lastBlockID):
         self.lastBlockID = lastBlockID
+        # self.nbc.foundBlockID(self, lastBlockID)
+
