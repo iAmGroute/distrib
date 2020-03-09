@@ -7,8 +7,9 @@ import threading
 import NbcAPI
 
 from NBC   import NBC
-from Node  import Node
 from Miner import Miner
+
+from Common.Node import Node
 
 
 # Configure HUG to send CORS header

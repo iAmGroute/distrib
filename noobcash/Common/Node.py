@@ -2,10 +2,10 @@
 import asyncio
 import random
 
-from Common.Generic  import find
-from Common.SlotMap  import SlotMap
-from NetworkProtocol import NetworkProtocol
-from Neighbor        import Neighbor
+from .Generic         import find
+from .SlotMap         import SlotMap
+from .Neighbor        import Neighbor
+from .NetworkProtocol import NetworkProtocol
 
 class Node:
 

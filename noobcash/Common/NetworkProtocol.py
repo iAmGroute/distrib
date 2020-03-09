@@ -28,7 +28,7 @@ class NetworkProtocol(asyncio.Protocol):
         self.higherP.packetReceived(packet)
 
     def sendPacket(self, packet):
-        print('Sending  packet:', packet)
+        # print('Sending  packet:', packet)
         header = len(packet).to_bytes(4, 'little')
         self.transport.write(header + packet)
 

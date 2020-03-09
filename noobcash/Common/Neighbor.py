@@ -1,7 +1,7 @@
 
 import asyncio
 
-from Common.SlotMap import SlotMap
+from .SlotMap import SlotMap
 
 from NeighborRPC import NeighborRPC
 
