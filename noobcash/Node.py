@@ -9,24 +9,28 @@ from Neighbor        import Neighbor
 
 class Node:
 
-    def __init__(self, host, port, nbc):
+    def __init__(self, host, port):
         self.host      = host
         self.port      = port
-        self.nbc       = nbc
         self.neighbors = SlotMap()
         self.loop      = None
+        self.app       = None
+
+    def setApp(self, app):
+        self.app = app
 
     def removeMe(self, neighborID):
         del self.neighbors[neighborID]
 
-    def runForever(self):
-        self.loop = asyncio.new_event_loop()
-        self.loop.create_task(self.runServer())
-        self.loop.create_task(self.main())
-        self.loop.run_forever()
-
     def runAsync(self, coroutine):
         self.loop.create_task(coroutine)
+
+    def runForever(self):
+        self.loop = asyncio.new_event_loop()
+        self.runAsync(self.runServer())
+        if self.app:
+            self.runAsync(self.app.main())
+        self.loop.run_forever()
 
     async def runServer(self):
         await self.loop.create_server(
@@ -56,13 +60,11 @@ class Node:
         k  = min(k, len(ns))
         return random.sample(ns, k)
 
-    async def main(self):
-        while True:
-            await asyncio.sleep(4)
-            # Multicast
-            # for neighbor in self.neighbors:
-            #     neighbor.rpc.getLatestBlockID()
-            # Gossip
-            for neighbor in self.randomNeighbors(2):
-                neighbor.rpc.advLatestBlockID()
+    def multicast(self, f):
+        for neighbor in self.neighbors:
+            f(neighbor.rpc)
+
+    def gossip(self, f, k=2):
+        for neighbor in self.randomNeighbors(k):
+            f(neighbor.rpc)
 

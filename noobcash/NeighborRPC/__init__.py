@@ -16,7 +16,7 @@ class NeighborRPC:
 
     def __init__(self, neighbor):
         self.neighbor    = neighbor
-        self.nbc         = neighbor.node.nbc
+        self.nbc         = neighbor.node.app
         self.lastBlockID = 0
 
     def respond(self, cmd, data):

@@ -17,14 +17,13 @@ api.http.add_middleware(hug.middleware.CORSMiddleware(api, max_age=10))
 
 
 def main(host, port, blockchainFile, keyFile):
+    # Init the Node (server)
+    node  = Node(host, port)
     # Init the app-specific parts (blockchain, wallet and miner)
-    nbc   = NBC(blockchainFile, keyFile)
+    nbc   = NBC(blockchainFile, keyFile, node)
     miner = Miner(nbc)
     # Init the REST API (user interface)
     NbcAPI.init(nbc)
-    # Init the Node (server)
-    node  = Node(host, port, nbc)
-    nbc.node = node
     # The Node, Miner and API part must run concurrently,
     # so we run each in its own thread.
     threading.Thread(target=node.runForever,  args=(), daemon=True).start()
