@@ -1,10 +1,10 @@
 
 import importlib
 
-from . import GetLatestBlockID
+from . import AdvLatestBlockID
 
 modules = [
-    GetLatestBlockID
+    AdvLatestBlockID,
 ]
 handlers = {m.CMD: m for m in modules}
 
@@ -30,6 +30,8 @@ class NeighborRPC:
         assert handler is not None
         return handler.process(self, data)
 
-    def getLatestBlockID(self):
-        return GetLatestBlockID.request(self)
+    def advLatestBlockID(self):
+        return AdvLatestBlockID.request(self)
 
+    def setLatestBlockID(self, lastBlockID):
+        self.lastBlockID = lastBlockID

@@ -1,5 +1,6 @@
 
 import asyncio
+import random
 
 from Common.Generic  import find
 from Common.SlotMap  import SlotMap
@@ -50,9 +51,18 @@ class Node:
         neighbor      = Neighbor(self, -1, link, peerName)
         neighbor.myID = self.neighbors.append(neighbor)
 
+    def randomNeighbors(self, k):
+        ns = list(self.neighbors)
+        k  = min(k, len(ns))
+        return random.sample(ns, k)
+
     async def main(self):
         while True:
             await asyncio.sleep(4)
-            for neighbor in self.neighbors:
-                neighbor.getLatestBlockID()
+            # Multicast
+            # for neighbor in self.neighbors:
+            #     neighbor.rpc.getLatestBlockID()
+            # Gossip
+            for neighbor in self.randomNeighbors(2):
+                neighbor.rpc.advLatestBlockID()
 
