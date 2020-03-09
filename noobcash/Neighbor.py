@@ -70,18 +70,23 @@ class Neighbor:
             reply = None
         return reply
 
-    def _prepareRequest(self):
+    def _prepareRequest(self, noReply):
         f = asyncio.Future()
         if self.connected:
             reqID = self.futures.append(f)
             ref   = reqID.to_bytes(4, 'little')
+            if noReply:
+                # No need to wait for a reply, so remove the future,
+                # and still the reqID cannot be used by anything else.
+                del self.futures[reqID]
+                f.set_result(None)
         else:
             f.cancel()
             ref = None
         return f, ref
 
-    def sendRequest(self, cmd, data):
-        f, ref = self._prepareRequest()
+    def sendRequest(self, cmd, data, noReply=False):
+        f, ref = self._prepareRequest(noReply)
         if ref:
             packet  = ref
             packet += b'....' # flags
