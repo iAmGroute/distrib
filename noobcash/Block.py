@@ -13,6 +13,9 @@ class Block:
         self.timestamp = None
         self.txs       = None
 
+    def __repr__(self):
+        return f'Block({self.myID}, {self.nonce}, {self.thisHash}, {self.prevHash})'
+
     @staticmethod
     def fromJson(data):
         b = Block()
@@ -53,4 +56,11 @@ class Block:
         self.nonce    = data[ 8:12]
         self.thisHash = data[12:16]
         self.prevHash = data[16:20]
+
+    def isValid(self):
+        # TODO:
+        # hash(prevHash + timestamp + txs) == thisHash
+        # and
+        # hash(nonce + thisHash + prevHash).startsWith(b'0' * difficulty)
+        return self.myID >= 0
 
