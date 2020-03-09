@@ -51,6 +51,9 @@ class Blockchain:
         else:
             return False
 
+    def getBlock(self, blockID):
+        return self.blocks[blockID] if blockID < len(self.blocks) else None
+
     def getLastBlockID(self):
         return len(self.blocks) - 1
 
@@ -68,7 +71,6 @@ class Blockchain:
 
     def validateHeaders(self, blockHeaders):
         try:
-            assert len(blockHeaders) > 0
             common   = 0
             i        = blockHeaders[0].myID
             prevHash = blockHeaders[0].prevHash
@@ -76,13 +78,13 @@ class Blockchain:
                 assert i == bh.myID
                 if i < len(self.blocks) and self.blocks[i].thisHash == bh.thisHash:
                     common = i + 1
-                    continue
-                assert bh.prevHash == prevHash
-                # TODO: assert hash(bh.nonce + bh.thisHash + bh.prevHash).startswith(b'\x00' * difficulty)
+                else:
+                    assert bh.prevHash == prevHash
+                    # TODO: assert hash(bh.nonce + bh.thisHash + bh.prevHash).startswith(b'\x00' * difficulty)
                 prevHash = bh.thisHash
                 i += 1
             return True, common
-        except AssertionError:
+        except (IndexError, AssertionError):
             return False, 0
 
     def trySwapAt(self, height, blocks):
