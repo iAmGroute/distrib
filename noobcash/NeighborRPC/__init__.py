@@ -13,8 +13,8 @@ handlers = {m.CMD: m for m in modules}
 class NeighborRPC:
 
     def __init__(self, neighbor):
-        self.neighbor = neighbor
-        self.nbc      = neighbor.node.nbc
+        self.neighbor    = neighbor
+        self.nbc         = neighbor.node.nbc
         self.lastBlockID = 0
 
     def request(self, cmd):
@@ -40,5 +40,5 @@ class NeighborRPC:
 
     def setLastBlockID(self, lastBlockID):
         self.lastBlockID = lastBlockID
-        # self.nbc.foundBlockID(self, lastBlockID)
+        self.nbc.foundBlockID(self, lastBlockID)
 

@@ -71,3 +71,30 @@ class Blockchain:
         # Returns a (new) list of the current blockchain's blocks
         return self.blocks.copy()
 
+    def validateHeaders(self, blockHeaders):
+        try:
+            assert len(blockHeaders) > 0
+            common   = 0
+            i        = blockHeaders[0].myID
+            prevHash = blockHeaders[0].prevHash
+            for bh in blockHeaders:
+                assert i == bh.myID
+                if i < len(self.blocks) and self.blocks[i].thisHash == bh.thisHash:
+                    common = i + 1
+                    continue
+                assert bh.prevHash == prevHash
+                # TODO: assert hash(bh.nonce + bh.thisHash + bh.prevHash).startswith(b'\x00' * difficulty)
+                prevHash = bh.thisHash
+                i += 1
+            return True, common
+        except AssertionError:
+            return False, 0
+
+    def trySwapAt(self, height, blocks):
+        if height + len(blocks) > len(self.blocks):
+            self.blocks = self.blocks[:height] + blocks
+            self.save()
+            return True
+        else:
+            return False
+
