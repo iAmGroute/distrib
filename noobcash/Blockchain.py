@@ -12,7 +12,7 @@ class Blockchain:
         self.loaded   = self.load()
         # TODO: remove
         if len(self.blocks) == 0:
-            self.addBlock(Block.fromJson(['00000000', '10101010', '01000000', '01234567', []]))
+            self.blocks.append(Block.fromJson([0, '00000000', '10101010', '01000000', '01234567', []]))
 
     def load(self):
         try:
@@ -27,7 +27,7 @@ class Blockchain:
                         data = json.loads(line[2:])
                     except json.JSONDecodeError:
                         break
-                    self._addBlock(Block.fromJson(data['b']))
+                    self.blocks.append(Block.fromJson(data['b']))
             return True
         except FileNotFoundError:
             return False
