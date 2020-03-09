@@ -16,8 +16,8 @@ def status():
         'neighbors': [
             {
                 'connected':   neighbor.connected,
-                'lastBlockID': neighbor.lastBlockID,
-                'peerName':    neighbor.peerName
+                'peerName':    neighbor.peerName,
+                'lastBlockID': neighbor.rpc.lastBlockID
             }
             for neighbor in nbc.node.neighbors
         ],
