@@ -2,10 +2,12 @@
 import importlib
 
 from . import AdvLatestBlockID
+from . import GetBlock
 from . import GetBlockHeaders
 
 modules = [
     AdvLatestBlockID,
+    GetBlock,
     GetBlockHeaders,
 ]
 handlers = {m.CMD: m for m in modules}
@@ -16,11 +18,6 @@ class NeighborRPC:
         self.neighbor    = neighbor
         self.nbc         = neighbor.node.nbc
         self.lastBlockID = 0
-
-    def request(self, cmd):
-        handler = handlers.get(cmd)
-        assert handler is not None
-        return handler.request(self)
 
     def respond(self, cmd, data):
         handler = handlers.get(cmd)
@@ -37,6 +34,9 @@ class NeighborRPC:
 
     def getBlockHeaders(self):
         return GetBlockHeaders.request(self)
+
+    def getBlock(self, blockID, blockHash):
+        return GetBlock.request(self, blockID, blockHash)
 
     def setLastBlockID(self, lastBlockID):
         self.lastBlockID = lastBlockID
