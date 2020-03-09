@@ -42,19 +42,14 @@ class Blockchain:
                 f.write('\n> ' + (json.dumps(data)))
             f.write('\n')
 
-    def _addBlock(self, block):
+    def addBlock(self, block):
         last = self.blocks[-1]
         if block.myID == last.myID + 1 and block.prevHash == last.thisHash:
             self.blocks.append(block)
+            self.save()
             return True
         else:
             return False
-
-    def addBlock(self, block):
-        ok = self._addBlock(block)
-        if ok:
-            self.save()
-        return ok
 
     def getLastBlockID(self):
         return len(self.blocks) - 1
