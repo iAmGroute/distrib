@@ -17,8 +17,8 @@ class Neighbor:
         self.futures   = SlotMap()
         self.rpc       = NeighborRPC(self)
 
-    def destroy(self):
-        print('Destroy')
+    def disconnected(self):
+        print('Disconnected')
         if not self.connected:
             return
         self.connected = False
@@ -26,10 +26,6 @@ class Neighbor:
             future.cancel()
         self.futures.deleteAll()
         self.node.removeMe(self.myID)
-
-    def disconnected(self):
-        print('Disconnected')
-        self.destroy()
 
     def disconnect(self):
         print('Disconnecting')
@@ -42,7 +38,7 @@ class Neighbor:
             if reply:
                 self.link.sendPacket(reply)
         except AssertionError:
-            self.destroy()
+            self.disconnect()
 
     def processPacket(self, packet):
         assert len(packet) >= 16
