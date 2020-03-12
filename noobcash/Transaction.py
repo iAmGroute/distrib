@@ -1,40 +1,44 @@
 
+from TransactionRef    import TransactionRef
+from TransactionOutput import TransactionOutput
+
 class Transaction:
 
     def __init__(self):
-        self.signature     = None
-        self.thisHash      = None
-        self.senderAddress = None
-        self.inputs        = None
-        self.outputs       = None
+        # Identity
+        self.thisHash      = b'' # do we need this ?
+        # Content
+        self.signature     = b''
+        self.senderAddress = b''
+        self.inputs        = []
+        self.outputs       = []
 
     @staticmethod
     def fromJson(data):
         tx = Transaction()
         tx.signature     = bytes.fromhex(data[0])
-        tx.thisHash      = bytes.fromhex(data[1])
-        tx.senderAddress = bytes.fromhex(data[2])
+        tx.senderAddress = bytes.fromhex(data[1])
         tx.inputs        = [
-            bytes.fromhex(inputTxHash)
-            for inputTxHash in data[3]
+            TransactionRef.fromJson(txi)
+            for txi in data[2]
         ]
-        tx.outputs       = []
-        for [outputAddress, amount] in data[4]:
-            tx.outputs.append((bytes.fromhex(outputAddress), amount))
+        tx.outputs       = [
+            TransactionOutput.fromJson(txo)
+            for txo in data[3]
+        ]
         return tx
 
     def toJson(self):
         data = [
             self.signature.hex(),
-            self.thisHash.hex(),
             self.senderAddress.hex(),
             [
-                inputTxHash.hex()
-                for inputTxHash in self.inputs
+                txi.toJson()
+                for txi in self.inputs
             ],
             [
-                [outputAddress.hex(), amount]
-                for (outputAddress, amount) in self.outputs
+                txo.toJson()
+                for txo in self.outputs
             ]
         ]
         return data
