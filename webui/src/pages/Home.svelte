@@ -1,3 +1,6 @@
+<script>
+  export let state;
+</script>
 
 <style>
   .small-box .icon>i {
@@ -16,7 +19,7 @@
     <div class="small-box bg-primary">
       <div class="inner">
         <h3>Status</h3>
-        <p>???</p>
+        <p>Blockchain has {state.content.status.blockchain.length} blocks</p>
       </div>
       <div class="icon">
         <i class="fas fa-tachometer-alt"></i>
@@ -30,7 +33,7 @@
     <div class="small-box bg-primary">
       <div class="inner">
         <h3>Wallet</h3>
-        <p>???</p>
+        <p>Balance is {state.content.status.balance} NBC</p>
       </div>
       <div class="icon">
         <i class="fas fa-wallet"></i>
@@ -44,7 +47,7 @@
     <div class="small-box bg-primary">
       <div class="inner">
         <h3>Network</h3>
-        <p>???</p>
+        <p>Connected to {state.content.status.neighbors.length} neighbors</p>
       </div>
       <div class="icon">
         <i class="fas fa-network-wired"></i>
@@ -58,7 +61,7 @@
     <div class="small-box bg-primary">
       <div class="inner">
         <h3>Connect</h3>
-        <p>???</p>
+        <p>Click to connect to other nodes</p>
       </div>
       <div class="icon">
         <i class="fas fa-plug"></i>
