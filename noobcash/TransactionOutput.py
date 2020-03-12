@@ -13,5 +13,5 @@ class TransactionOutput:
         return TransactionOutput(bytes.fromhex(data[0]), data[1])
 
     def toJson(self):
-        return [self.outputAddress.hex(), self.amount.hex()]
+        return [self.outputAddress.hex(), self.amount]
 
