@@ -13,3 +13,6 @@ disable=
     no-else-return,
     useless-return,
     fixme
+
+enable=
+    unused-import

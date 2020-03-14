@@ -1,6 +1,8 @@
 
 import hug
 
+# pylint: disable=protected-access
+
 nbc = None
 
 def init(nbcInstance):
@@ -15,9 +17,11 @@ def status():
         'port': nbc.node.port,
         'neighbors': [
             {
-                'connected':   neighbor.connected,
-                'peerName':    neighbor.peerName,
-                'lastBlockID': neighbor.rpc.lastBlockID
+                'connected':    neighbor.connected,
+                'peerName':     neighbor.peerName,
+                'lastBlockID':  neighbor.rpc.lastBlockID,
+                'isSyncing':    neighbor.isSyncing,
+                'pendingCount': len(neighbor.futures)
             }
             for neighbor in nbc.node.neighbors
         ],

@@ -22,6 +22,8 @@ class NBC:
 
     # A block is found externally (by NeighborRPC)
     def foundBlockID(self, neighborRPC, lastBlockID):
+        if neighborRPC.isSyncing:
+            return
         if lastBlockID > self.blockchain.getLastBlockID():
             self.node.runAsync(self.consensusWith(neighborRPC))
 
@@ -42,7 +44,7 @@ class NBC:
         if ok:
             self.node.multicast(lambda rpc: rpc.advLatestBlockID())
 
-    async def consensusWith(self, neighborRPC):
+    async def _consensusWith(self, neighborRPC):
         blocks = await neighborRPC.getBlockHeaders()
         if not blocks:
             return
@@ -58,3 +60,9 @@ class NBC:
                 if not block.isValid():
                     return
             self.blockchain.trySwapAt(common, blocks)
+
+    async def consensusWith(self, neighborRPC):
+        neighborRPC.isSyncing = True
+        await self._consensusWith(neighborRPC)
+        neighborRPC.isSyncing = False
+
