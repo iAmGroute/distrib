@@ -20,7 +20,7 @@ def status():
                 'connected':    neighbor.connected,
                 'peerName':     neighbor.peerName,
                 'lastBlockID':  neighbor.rpc.lastBlockID,
-                'isSyncing':    neighbor.isSyncing,
+                'isSyncing':    neighbor.rpc.isSyncing,
                 'pendingCount': len(neighbor.futures)
             }
             for neighbor in nbc.node.neighbors
