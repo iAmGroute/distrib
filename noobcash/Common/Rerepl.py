@@ -30,13 +30,13 @@ def rerepl(context, addr='0.0.0.0', port=0):
         if not ret:
             break
         buf += ret
-        if buf.endswith(b'\n\n'):
+        if buf[-2:] == b'\n\n' or buf[-2:] == b'\r\r' or buf[-3:] == b'\n\r\n':
             code = buf.decode('utf-8')
             buf  = b''
             try:
                 exec(code)
             except Exception as e:
-                conn.sendall((str(e) + '\n\n').encode('utf-8'))
-            conn.sendall(('\n'.join(p.lines) + '\n\n').encode('utf-8'))
+                conn.sendall((str(e) + '\r\n\r\n').encode('utf-8'))
+            conn.sendall(('\r\n'.join(p.lines) + '\r\n\r\n').encode('utf-8'))
             p.lines = []
 
