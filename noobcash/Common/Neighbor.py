@@ -32,7 +32,6 @@ class Neighbor:
         self.link.disconnect()
 
     def packetReceived(self, packet):
-        print('Received packet:', packet)
         try:
             reply = self.processPacket(packet)
             if reply:
@@ -47,6 +46,7 @@ class Neighbor:
         cmd     = packet[ 8:16]
         data    = packet[16:]
         isReply = flags == b'R...'
+        # print('Received', cmd, 'reply' if isReply else 'request')
         if not isReply:
             ret = self.rpc.respond(cmd, data)
             if ret is None:
@@ -91,6 +91,7 @@ class Neighbor:
             packet += b'....' # flags
             packet += cmd
             packet += data
+            # print('Sending ', cmd)
             self.link.sendPacket(packet)
         return f
 

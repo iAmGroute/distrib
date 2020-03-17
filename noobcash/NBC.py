@@ -45,10 +45,13 @@ class NBC:
             self.node.multicast(lambda rpc: rpc.advLatestBlockID())
 
     async def _consensusWith(self, neighborRPC):
+        print('Consensus with', neighborRPC.neighbor.peerName, 'started')
         blocks = await neighborRPC.getBlockHeaders()
         if not blocks:
             return
+        print('Consensus: got block headers')
         ok, common = self.blockchain.validateHeaders(blocks)
+        print(ok, common, 'common', len(blocks) - common, 'different')
         if ok:
             blocks = blocks[common:]
             for block in blocks:
@@ -58,8 +61,11 @@ class NBC:
                 block.timestamp = b.timestamp
                 block.txs       = b.txs
                 if not block.isValid():
+                    print('Consensus: INVALID block', block.myID)
                     return
-            self.blockchain.trySwapAt(common, blocks)
+            print('Consensus: trying to swap')
+            swapped = self.blockchain.trySwapAt(common, blocks)
+            print(swapped)
 
     async def consensusWith(self, neighborRPC):
         neighborRPC.isSyncing = True
