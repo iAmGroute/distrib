@@ -17,18 +17,17 @@ class NetworkProtocol(asyncio.Protocol):
     def data_received(self, data):
         self.recvBuffer += data
         available = len(self.recvBuffer)
-        if available < 4:
-            return
-        header   = self.recvBuffer[0:4]
-        totalLen = int.from_bytes(header, 'little') + 4
-        if available < totalLen:
-            return
-        packet          = self.recvBuffer[4:totalLen]
-        self.recvBuffer = self.recvBuffer[totalLen:]
-        self.higherP.packetReceived(packet)
+        while available >= 4:
+            header   = self.recvBuffer[0:4]
+            totalLen = int.from_bytes(header, 'little') + 4
+            if available < totalLen:
+                return
+            available -= totalLen
+            packet          = self.recvBuffer[4:totalLen]
+            self.recvBuffer = self.recvBuffer[totalLen:]
+            self.higherP.packetReceived(packet)
 
     def sendPacket(self, packet):
-        # print('Sending  packet:', packet)
         header = len(packet).to_bytes(4, 'little')
         self.transport.write(header + packet)
 
