@@ -65,9 +65,9 @@ class Blockchain:
         utxos = self.getUTXOs(address)
         return sum([amount for tx, amount in utxos])
 
-    def getBlocks(self):
+    def getBlocks(self, fromID, toID):
         # Returns a (new) list of the current blockchain's blocks
-        return self.blocks.copy()
+        return self.blocks[fromID:toID]
 
     def validateHeaders(self, blockHeaders):
         try:

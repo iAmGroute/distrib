@@ -8,7 +8,13 @@
   <!-- Left navbar links -->
   <ul class="navbar-nav">
     <li class="nav-item d-none d-sm-inline-block">
-      <a href="#/" use:active class="nav-link">Home</a>
+      <a href="#/status" use:active class="nav-link">{state.content.status.blockchain.length} Blocks</a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <a href="#/wallet" use:active class="nav-link">{state.content.status.balance} NBC</a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <a href="#/network" use:active class="nav-link">{state.content.status.neighbors.length} Neighbors</a>
     </li>
   </ul>
   <!-- Right navbar links -->
