@@ -46,10 +46,10 @@ class NBC:
 
     async def _consensusWith(self, neighborRPC, lastBlockID):
         print('Consensus with', neighborRPC.neighbor.peerName, 'started')
-        fromID = max(self.blockchain.getLastBlockID() - 10, 1)
+        fromID = max(self.blockchain.getLastBlockID() - 10, 0)
         toID   = lastBlockID + 1
         blocks = []
-        while fromID > 0:
+        while True:
             print('Consensus: asking block headers from', fromID, 'to', toID)
             newblocks = await neighborRPC.getBlockHeaders(fromID, toID)
             if not newblocks:
@@ -76,8 +76,14 @@ class NBC:
                 print(swapped)
                 break
             # Ask for more (older) blocks
-            toID    = fromID
-            fromID -= 100
+            if fromID > 0:
+                toID   = fromID
+                fromID = max(fromID - 100, 0)
+            else:
+                # We have every block, but still can't find a common start,
+                # so we will assume bad neighbor/connection.
+                print('Consensus: BAD neighbor')
+                neighborRPC.neighbor.disconnect()
 
     async def consensusWith(self, neighborRPC, lastBlockID):
         neighborRPC.isSyncing = True
