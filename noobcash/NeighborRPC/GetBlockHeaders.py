@@ -5,15 +5,19 @@ from Block import Block
 
 CMD = b'GBHS....'
 
-def request(self):
-    return self.neighbor.sendRequest(CMD, b'')
+def request(self, fromID, toID):
+    data  = fromID.to_bytes(8, 'little')
+    data +=   toID.to_bytes(8, 'little')
+    return self.neighbor.sendRequest(CMD, data)
 
 def respond(self, data):
-    assert len(data) == 0
-    lastBlocks = self.nbc.blockchain.getBlocks()
+    assert len(data) == 16
+    fromID = int.from_bytes(data[ 0: 8], 'little')
+    toID   = int.from_bytes(data[ 8:16], 'little')
+    blocks = self.nbc.blockchain.getBlocks(fromID, toID)
     reply = b''.join([
         b.getHeaderBytes()
-        for b in lastBlocks
+        for b in blocks
     ])
     return reply
 

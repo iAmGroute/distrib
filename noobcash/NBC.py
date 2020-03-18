@@ -25,7 +25,7 @@ class NBC:
         if neighborRPC.isSyncing:
             return
         if lastBlockID > self.blockchain.getLastBlockID():
-            self.node.runAsync(self.consensusWith(neighborRPC))
+            self.node.runAsync(self.consensusWith(neighborRPC, lastBlockID))
 
     # Miner calls this to get a block to mine
     def getBlockToMine(self):
@@ -44,31 +44,43 @@ class NBC:
         if ok:
             self.node.multicast(lambda rpc: rpc.advLatestBlockID())
 
-    async def _consensusWith(self, neighborRPC):
+    async def _consensusWith(self, neighborRPC, lastBlockID):
         print('Consensus with', neighborRPC.neighbor.peerName, 'started')
-        blocks = await neighborRPC.getBlockHeaders()
-        if not blocks:
-            return
-        print('Consensus: got block headers')
-        ok, common = self.blockchain.validateHeaders(blocks)
-        print(ok, common, 'common', len(blocks) - common, 'different')
-        if ok:
-            blocks = blocks[common:]
-            for block in blocks:
-                b = await neighborRPC.getBlock(block.myID, block.thisHash)
-                if not b:
-                    return
-                block.timestamp = b.timestamp
-                block.txs       = b.txs
-                if not block.isValid():
-                    print('Consensus: INVALID block', block.myID)
-                    return
-            print('Consensus: trying to swap')
-            swapped = self.blockchain.trySwapAt(common, blocks)
-            print(swapped)
+        fromID = max(self.blockchain.getLastBlockID() - 10, 1)
+        toID   = lastBlockID + 1
+        blocks = []
+        while fromID > 0:
+            print('Consensus: asking block headers from', fromID, 'to', toID)
+            newblocks = await neighborRPC.getBlockHeaders(fromID, toID)
+            if not newblocks:
+                return
+            print('Consensus: got block headers')
+            ok, common = self.blockchain.validateHeaders(newblocks)
+            print(ok, common, 'common', lastBlockID - common, 'different')
+            blocks = newblocks + blocks
+            if not ok:
+                return
+            if common > 0:
+                blocks = blocks[common - blocks[0].myID:]
+                for block in blocks:
+                    b = await neighborRPC.getBlock(block.myID, block.thisHash)
+                    if not b:
+                        return
+                    block.timestamp = b.timestamp
+                    block.txs       = b.txs
+                    if not block.isValid():
+                        print('Consensus: INVALID block', block.myID)
+                        return
+                print('Consensus: trying to swap')
+                swapped = self.blockchain.trySwapAt(common, blocks)
+                print(swapped)
+                break
+            # Ask for more (older) blocks
+            toID    = fromID
+            fromID -= 100
 
-    async def consensusWith(self, neighborRPC):
+    async def consensusWith(self, neighborRPC, lastBlockID):
         neighborRPC.isSyncing = True
-        await self._consensusWith(neighborRPC)
+        await self._consensusWith(neighborRPC, lastBlockID)
         neighborRPC.isSyncing = False
 

@@ -32,8 +32,8 @@ class NeighborRPC:
     def advLatestBlockID(self):
         return AdvLatestBlockID.request(self)
 
-    def getBlockHeaders(self):
-        return GetBlockHeaders.request(self)
+    def getBlockHeaders(self, fromID, toID):
+        return GetBlockHeaders.request(self, fromID, toID)
 
     def getBlock(self, blockID, blockHash):
         isStale = lambda b: b is None or b.thisHash != blockHash
