@@ -9,6 +9,8 @@ disable=
     too-many-arguments,
     too-many-locals,
     too-many-statements,
+    too-many-public-methods,
+    too-many-instance-attributes,
     global-statement,
     no-else-return,
     useless-return,
