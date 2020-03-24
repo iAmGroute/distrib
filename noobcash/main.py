@@ -33,8 +33,8 @@ def main(host, port, blockchainFile, keyFile):
     # Init the Node (server)
     node  = Node(host, port)
     # Init the app-specific parts (blockchain, wallet and miner)
-    nbc   = NBC(blockchainFile, keyFile, node)
-    miner = Miner(nbc)
+    miner = Miner()
+    nbc   = NBC(blockchainFile, keyFile, node, miner)
     # Init the REST API (user interface)
     NbcAPI.init(nbc)
     # The Node, Miner and API part must run concurrently,

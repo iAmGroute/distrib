@@ -9,11 +9,13 @@ from Wallet     import Wallet
 
 class NBC:
 
-    def __init__(self, blockchainFile, keyFile, node):
+    def __init__(self, blockchainFile, keyFile, node, miner):
         self.blockchain = Blockchain(blockchainFile)
         self.wallet     = Wallet(self, keyFile)
         self.node       = node
         self.node.setApp(self)
+        self.miner      = miner
+        self.miner.setNBC(self)
         self.difficulty = 1 << (32 - 25)
 
     async def main(self):
@@ -45,6 +47,11 @@ class NBC:
         if ok:
             self.node.multicast(lambda rpc: rpc.advLatestBlockID())
 
+    async def consensusWith(self, neighborRPC, lastBlockID):
+        neighborRPC.isSyncing = True
+        await self._consensusWith(neighborRPC, lastBlockID)
+        neighborRPC.isSyncing = False
+
     async def _consensusWith(self, neighborRPC, lastBlockID):
         print('Consensus with', neighborRPC.neighbor.peerName, 'started')
         fromID = max(self.blockchain.getLastBlockID() - 10, 0)
@@ -63,18 +70,7 @@ class NBC:
                 return
             if common > 0:
                 blocks = blocks[common - blocks[0].myID:]
-                for block in blocks:
-                    b = await neighborRPC.getBlock(block.myID, block.thisHash)
-                    if not b:
-                        return
-                    block.timestamp = b.timestamp
-                    block.txs       = b.txs
-                    if not block.isValid():
-                        print('Consensus: INVALID block', block.myID)
-                        return
-                print('Consensus: trying to swap')
-                swapped = self.blockchain.trySwapAt(common, blocks)
-                print(swapped)
+                await self._doConsensusWith(neighborRPC, blocks, common)
                 break
             # Ask for more (older) blocks
             if fromID > 0:
@@ -86,8 +82,19 @@ class NBC:
                 print('Consensus: BAD neighbor')
                 neighborRPC.neighbor.disconnect()
 
-    async def consensusWith(self, neighborRPC, lastBlockID):
-        neighborRPC.isSyncing = True
-        await self._consensusWith(neighborRPC, lastBlockID)
-        neighborRPC.isSyncing = False
+    async def _doConsensusWith(self, neighborRPC, blocks, common):
+        for block in blocks:
+            b = await neighborRPC.getBlock(block.myID, block.thisHash)
+            if not b:
+                return
+            block.timestamp = b.timestamp
+            block.txs       = b.txs
+            if not block.isValid():
+                print('Consensus: INVALID block', block.myID)
+                return
+        print('Consensus: trying to swap')
+        swapped = self.blockchain.trySwapAt(common, blocks)
+        print(swapped)
+        if swapped:
+            self.miner.keepMining = False
 

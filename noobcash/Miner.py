@@ -3,16 +3,20 @@ from hashlib import sha256
 
 class Miner:
 
-    def __init__(self, nbc):
-        self.nbc        = nbc
+    def __init__(self):
+        self.nbc        = None
         self.enabled    = False
         self.keepMining = False
+
+    def setNBC(self, nbc):
+        self.nbc = nbc
 
     def runForever(self):
         print('Mining enabled')
         self.enabled = True
         while self.enabled:
             b, dif = self.nbc.getBlockToMine()
+            print('Mining block', b.myID)
             d = b.thisHash + b.prevHash
             n = 0
             self.keepMining = True
