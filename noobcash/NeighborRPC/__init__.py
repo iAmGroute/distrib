@@ -39,7 +39,7 @@ class NeighborRPC:
         isStale = lambda b: b is None or b.thisHash != blockHash
         f = self.blockFutures.get(blockID)
         if f is None or f.done() and isStale(f.result()):
-            print('Asking for', blockID, blockHash)
+            print('Asking for', blockID, blockHash.hex())
             f = GetBlock.request(self, blockID, blockHash)
             self.blockFutures[blockID] = f
         return f

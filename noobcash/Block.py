@@ -14,7 +14,7 @@ class Block:
         self.txs       = None
 
     def __repr__(self):
-        return f'Block({self.myID}, {self.nonce}, {self.thisHash}, {self.prevHash})'
+        return f'Block({self.myID}, {self.nonce.hex()}, {self.thisHash.hex()}, {self.prevHash.hex()})'
 
     @staticmethod
     def fromJson(data):
