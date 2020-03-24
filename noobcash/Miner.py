@@ -1,25 +1,36 @@
 
-import random
-
-
-def mineOneBlock(block):
-    j = 0
-    for i in range(random.randrange(1, 31) * (10 ** 7)):
-        j += i if i % 7 else -5 * i
-    block.nonce = (j & 0xFFFFFFFF).to_bytes(4, 'little')
-
+from hashlib import sha256
 
 class Miner:
 
     def __init__(self, nbc):
         self.nbc        = nbc
+        self.enabled    = False
         self.keepMining = False
 
     def runForever(self):
-        print('Mining started')
-        self.keepMining = True
-        while self.keepMining:
-            b = self.nbc.getBlockToMine()
-            mineOneBlock(b)
-            self.nbc.blockMined(b)
+        print('Mining enabled')
+        self.enabled = True
+        while self.enabled:
+            b, dif = self.nbc.getBlockToMine()
+            d = b.thisHash + b.prevHash
+            n = 0
+            self.keepMining = True
+            while self.keepMining:
+                # Run 'a few' iterations without checking `keepMining`
+                # more iterations -> better hashrate
+                # few  iterations -> better response time
+                # 100000 take around 150ms
+                for _ in range(100000):
+                    h = sha256()
+                    n += 1
+                    nonce = n.to_bytes(4, 'little')
+                    h.update(nonce + d)
+                    if int.from_bytes(h.digest()[:4], 'big') < dif:
+                        # found it !
+                        b.nonce = nonce
+                        self.nbc.blockMined(b)
+                        self.keepMining = False
+                        break
+        print('Mining disabled')
 

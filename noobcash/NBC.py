@@ -14,6 +14,7 @@ class NBC:
         self.wallet     = Wallet(self, keyFile)
         self.node       = node
         self.node.setApp(self)
+        self.difficulty = 1 << 11
 
     async def main(self):
         while True:
@@ -35,7 +36,7 @@ class NBC:
         b.prevHash  = self.blockchain.blocks[b.myID - 1].thisHash
         b.timestamp = (int(time.time()) & 0xFFFFFFFF).to_bytes(4, 'little')
         b.txs       = []
-        return b
+        return b, self.difficulty
 
     # Miner calls this when a block is mined
     def blockMined(self, block):
