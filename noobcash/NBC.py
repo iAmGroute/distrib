@@ -14,7 +14,7 @@ class NBC:
         self.wallet     = Wallet(self, keyFile)
         self.node       = node
         self.node.setApp(self)
-        self.difficulty = 1 << 11
+        self.difficulty = 1 << (32 - 25)
 
     async def main(self):
         while True:
