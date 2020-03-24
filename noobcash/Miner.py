@@ -28,9 +28,9 @@ class Miner:
                 for _ in range(100000):
                     h = sha256()
                     n += 1
-                    nonce = n.to_bytes(4, 'little')
+                    nonce = n.to_bytes(8, 'little')
                     h.update(nonce + d)
-                    if int.from_bytes(h.digest()[:4], 'big') < dif:
+                    if int.from_bytes(h.digest()[:8], 'big') < dif:
                         # found it !
                         b.nonce = nonce
                         self.nbc.blockMined(b)

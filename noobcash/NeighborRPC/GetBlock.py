@@ -13,9 +13,9 @@ def request(self, blockID, blockHash):
     return self.neighbor.sendRequest(CMD, data)
 
 def respond(self, data):
-    assert len(data) == 12
+    assert len(data) == 40
     blockID   = int.from_bytes(data[ 0: 8], 'little')
-    blockHash = data[ 8:12]
+    blockHash = data[ 8:40]
     block     = self.nbc.blockchain.getBlock(blockID)
     if block and block.thisHash == blockHash:
         reply = json.dumps(block.toJson()).encode('utf-8')

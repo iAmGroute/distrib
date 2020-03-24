@@ -12,7 +12,7 @@ class Blockchain:
         self.loaded   = self.load()
         # TODO: remove
         if len(self.blocks) == 0:
-            self.blocks.append(Block.fromJson([0, '00000000', '10101010', '01000000', '01234567', []]))
+            raise ValueError('Empty blockchain')
 
     def load(self):
         try:

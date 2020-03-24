@@ -16,7 +16,7 @@ class NBC:
         self.node.setApp(self)
         self.miner      = miner
         self.miner.setNBC(self)
-        self.difficulty = 1 << (32 - 25)
+        self.difficulty = 1 << (64 - 22)
 
     async def main(self):
         while True:
@@ -34,9 +34,9 @@ class NBC:
     def getBlockToMine(self):
         b = Block()
         b.myID      = len(self.blockchain.blocks)
-        b.thisHash  = random.randrange(1000).to_bytes(4, 'little')
+        b.thisHash  = random.randrange(1000).to_bytes(32, 'little')
         b.prevHash  = self.blockchain.blocks[b.myID - 1].thisHash
-        b.timestamp = (int(time.time()) & 0xFFFFFFFF).to_bytes(4, 'little')
+        b.timestamp = int(time.time()).to_bytes(8, 'little')
         b.txs       = []
         return b, self.difficulty
 

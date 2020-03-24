@@ -53,9 +53,9 @@ class Block:
 
     def setHeaderBytes(self, data):
         self.myID     = int.from_bytes(data[ 0: 8], 'little')
-        self.nonce    = data[ 8:12]
-        self.thisHash = data[12:16]
-        self.prevHash = data[16:20]
+        self.nonce    = data[ 8:16]
+        self.thisHash = data[16:48]
+        self.prevHash = data[48:80]
 
     def isValid(self):
         # TODO:
