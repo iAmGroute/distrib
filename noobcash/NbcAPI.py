@@ -25,10 +25,9 @@ def status():
             }
             for neighbor in nbc.node.neighbors
         ],
-        'blockchain': [
-            block.toJson()
-            for block in nbc.blockchain.blocks
-        ],
+        'blockchain': {
+            'length': len(nbc.blockchain.blocks)
+        },
         'utxos': [
             (tx.thisHash.hex(), amount)
             for tx, amount in nbc.wallet.getUTXOs()

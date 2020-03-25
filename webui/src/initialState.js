@@ -6,7 +6,9 @@ const initialState = {
             'host': '0.0.0.0',
             'port': 5000,
             'neighbors': [],
-            'blockchain': [],
+            'blockchain': {
+                'length': 0
+            },
             'utxos': [],
             'balance': null
         }
