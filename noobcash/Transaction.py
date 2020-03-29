@@ -1,14 +1,15 @@
 
+from Common.Generic import listToBytes
+
 from TransactionRef    import TransactionRef
 from TransactionOutput import TransactionOutput
 
 class Transaction:
 
     def __init__(self):
-        # Identity
-        self.thisHash      = b'' # do we need this ?
-        # Content
+        # Signature
         self.signature     = b''
+        # Content
         self.senderAddress = b''
         self.inputs        = []
         self.outputs       = []
@@ -42,4 +43,28 @@ class Transaction:
             ]
         ]
         return data
+
+    def getContentBytes(self):
+        res = self.senderAddress                                   \
+            + listToBytes(self.inputs,  lambda txi: txi.toBytes()) \
+            + listToBytes(self.outputs, lambda txo: txo.toBytes())
+        return res
+
+    def toBytes(self):
+        return self.signature + self.getContentBytes()
+
+    def isSignatureValid(self):
+        # TODO: check signature against getContentBytes()
+        return bool(self.signature)
+
+    def areInputsUnique(self):
+        ins = [(txi.blockID, txi.indexInBlock) for txi in self.inputs]
+        return len(ins) == len(set(ins))
+
+    def areOutputsUnique(self):
+        outs = [txo.outputAddress for txo in self.outputs]
+        return len(outs) == len(set(outs))
+
+    def isValid(self):
+        return self.isSignatureValid() and self.areInputsUnique() and self.areOutputsUnique()
 

@@ -1,6 +1,5 @@
 
 import time
-import random
 import asyncio
 
 from Block      import Block
@@ -16,7 +15,7 @@ class NBC:
         self.node.setApp(self)
         self.miner      = miner
         self.miner.setNBC(self)
-        self.difficulty = 1 << (64 - 22)
+        self.difficulty = 1 << (64 - 25)
 
     async def main(self):
         while True:
@@ -34,15 +33,15 @@ class NBC:
     def getBlockToMine(self):
         b = Block()
         b.myID      = len(self.blockchain.blocks)
-        b.thisHash  = random.randrange(1000).to_bytes(32, 'little')
         b.prevHash  = self.blockchain.blocks[b.myID - 1].thisHash
         b.timestamp = int(time.time()).to_bytes(8, 'little')
         b.txs       = []
+        b.thisHash  = b.calcThisHash()
         return b, self.difficulty
 
     # Miner calls this when a block is mined
     def blockMined(self, block):
-        ok = self.blockchain.addBlock(block)
+        ok = self.blockchain.addMinedBlock(block)
         print('Mined block', block.myID, 'valid' if ok else 'stale')
         if ok:
             self.node.multicast(lambda rpc: rpc.advLatestBlockID())
@@ -63,7 +62,7 @@ class NBC:
             if not newblocks:
                 return
             print('Consensus: got block headers')
-            ok, common = self.blockchain.validateHeaders(newblocks)
+            ok, common = self.blockchain.validateHeaders(newblocks, self.difficulty)
             print(ok, common, 'common', lastBlockID - common, 'different')
             blocks = newblocks + blocks
             if not ok:

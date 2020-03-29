@@ -48,7 +48,7 @@ class Blockchain:
             f.write('> ' + json.dumps(data) + '\n')
         f.flush()
 
-    def addBlock(self, block):
+    def addMinedBlock(self, block):
         last = self.blocks[-1]
         if block.myID == last.myID + 1 and block.prevHash == last.thisHash:
             self.blocks.append(block)
@@ -75,7 +75,7 @@ class Blockchain:
         # Returns a (new) list of the current blockchain's blocks
         return self.blocks[fromID:toID]
 
-    def validateHeaders(self, blockHeaders):
+    def validateHeaders(self, blockHeaders, dif):
         try:
             common   = 0
             i        = blockHeaders[0].myID
@@ -83,10 +83,11 @@ class Blockchain:
             for bh in blockHeaders:
                 assert i == bh.myID
                 if i < len(self.blocks) and self.blocks[i].thisHash == bh.thisHash:
+                    # we have this block, no need to check anything
                     common = i + 1
                 else:
                     assert bh.prevHash == prevHash
-                    # TODO: assert hash(bh.nonce + bh.thisHash + bh.prevHash).startswith(b'\x00' * difficulty)
+                    assert bh.isHeaderValid(dif)
                 prevHash = bh.thisHash
                 i += 1
             return True, common

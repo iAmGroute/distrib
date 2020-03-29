@@ -1,4 +1,8 @@
 
+from hashlib import sha256
+
+from Common.Generic import listToBytes
+
 from Transaction import Transaction
 
 class Block:
@@ -57,10 +61,22 @@ class Block:
         self.thisHash = data[16:48]
         self.prevHash = data[48:80]
 
-    def isValid(self):
-        # TODO:
-        # hash(prevHash + timestamp + txs) == thisHash
-        # and
-        # hash(nonce + thisHash + prevHash).startsWith(b'0' * difficulty)
-        return self.myID >= 0
+    def calcPowHash(self):
+        return sha256().update(self.nonce + self.thisHash + self.prevHash).digest()
+
+    def isHeaderValid(self, dif):
+        powHash = self.calcPowHash()
+        return int.from_bytes(powHash[:8], 'big') < dif
+
+    def calcThisHash(self):
+        h = sha256()
+        h.update(self.prevHash + self.timestamp)
+        h.update(listToBytes(self.txs, lambda tx: tx.toBytes()))
+        return h.digest()
+
+    def isBodyValid(self):
+        return self.thisHash == self.calcThisHash() and all([tx.isValid() for tx in self.txs])
+
+    def isValid(self, dif):
+        return self.isHeaderValid(dif) and self.isBodyValid()
 

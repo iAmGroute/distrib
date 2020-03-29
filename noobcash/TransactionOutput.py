@@ -15,3 +15,8 @@ class TransactionOutput:
     def toJson(self):
         return [self.outputAddress.hex(), self.amount]
 
+    def toBytes(self):
+        res = self.outputAddress \
+            + self.amount.to_bytes(8, 'little')
+        return res
+

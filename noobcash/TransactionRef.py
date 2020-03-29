@@ -12,3 +12,8 @@ class TransactionRef:
     def toJson(self):
         return [self.blockID, self.indexInBlock]
 
+    def toBytes(self):
+        res = self.blockID.to_bytes(8, 'little') \
+            + self.indexInBlock.to_bytes(8, 'little')
+        return res
+
