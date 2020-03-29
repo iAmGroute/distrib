@@ -2,6 +2,8 @@
 import time
 import asyncio
 
+import Constants
+
 from Block      import Block
 from Blockchain import Blockchain
 from Wallet     import Wallet
@@ -15,7 +17,7 @@ class NBC:
         self.node.setApp(self)
         self.miner      = miner
         self.miner.setNBC(self)
-        self.difficulty = 1 << (64 - 25)
+        self.difficulty = 1 << (64 - Constants.DIFFICULTY)
         self.loop       = None
 
     async def main(self):

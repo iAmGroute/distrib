@@ -1,0 +1,3 @@
+
+DIFFICULTY        = 25
+BLOCK_HEADER_SIZE = 80

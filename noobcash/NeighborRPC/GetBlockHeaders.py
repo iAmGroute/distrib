@@ -1,6 +1,8 @@
 # Get the latest block headers of our neighbor.
 # `self` is instance of `NeighborRPC`
 
+import Constants
+
 from Block import Block
 
 CMD = b'GBHS....'
@@ -22,8 +24,8 @@ def respond(self, data):
     return reply
 
 def process(self, data):
-    # TODO: this needs to be defined as a constant somewhere
-    headerSize = len(self.nbc.blockchain.blocks[0].getHeaderBytes())
+    # pylint: disable=unused-argument
+    headerSize = Constants.BLOCK_HEADER_SIZE
     blocks = []
     for i in range(0, len(data), headerSize):
         b = Block()
