@@ -20,3 +20,8 @@ def find(iterable, f):
 
 def lowerFirst(name):
     return name[0].lower() + name[1:]
+
+def listToBytes(aList, itemConverter):
+    header  = len(aList).to_bytes(8, 'little')
+    content = b''.join([itemConverter(item) for item in aList])
+    return header + content
