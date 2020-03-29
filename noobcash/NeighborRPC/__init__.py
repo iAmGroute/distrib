@@ -39,5 +39,6 @@ class NeighborRPC:
 
     def setLastBlockID(self, lastBlockID):
         self.lastBlockID = lastBlockID
-        self.nbc.foundBlockID(self, lastBlockID)
+        with self.nbc as nbc:
+            nbc.foundBlockID(self, lastBlockID)
 

@@ -14,13 +14,14 @@ def request(self, fromID, toID):
 
 def respond(self, data):
     assert len(data) == 16
-    fromID = int.from_bytes(data[ 0: 8], 'little')
-    toID   = int.from_bytes(data[ 8:16], 'little')
-    blocks = self.nbc.blockchain.getBlocks(fromID, toID)
-    reply = b''.join([
-        b.getHeaderBytes()
-        for b in blocks
-    ])
+    with self.nbc as nbc:
+        fromID = int.from_bytes(data[ 0: 8], 'little')
+        toID   = int.from_bytes(data[ 8:16], 'little')
+        blocks = nbc.blockchain.getBlocks(fromID, toID)
+        reply = b''.join([
+            b.getHeaderBytes()
+            for b in blocks
+        ])
     return reply
 
 def process(self, data):

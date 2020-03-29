@@ -15,7 +15,8 @@ class Miner:
         print('Mining enabled')
         self.enabled = True
         while self.enabled:
-            b, dif = self.nbc.getBlockToMine()
+            with self.nbc as nbc:
+                b, dif = nbc.getBlockToMine()
             print('Mining block', b.myID)
             d = b.thisHash + b.prevHash
             n = 0
@@ -33,7 +34,8 @@ class Miner:
                     if int.from_bytes(h.digest()[:8], 'big') < dif:
                         # found it !
                         b.nonce = nonce
-                        self.nbc.blockMined(b)
+                        with self.nbc as nbc:
+                            nbc.blockMined(b)
                         self.keepMining = False
                         break
         print('Mining disabled')

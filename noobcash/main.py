@@ -9,8 +9,8 @@ import NbcAPI
 from NBC   import NBC
 from Miner import Miner
 
-from Common.Node import Node
-
+from Common.Shared import Shared
+from Common.Node   import Node
 # Temporary for debug
 from Common.Rerepl import rerepl
 
@@ -34,12 +34,15 @@ def main(host, port, blockchainFile, keyFile):
     node  = Node(host, port)
     # Init the app-specific parts (blockchain, wallet and miner)
     miner = Miner()
-    nbc   = NBC(blockchainFile, keyFile, node, miner)
-    # Init the REST API (user interface)
-    NbcAPI.init(nbc)
+    _nbc  = NBC(blockchainFile, keyFile, node, miner)
+    nbc   = Shared(_nbc)
+    # Link the (shared) NBC back to
+    node.setApp(nbc)  # the Node
+    miner.setNBC(nbc) # the Miner
+    NbcAPI.init(nbc)  # the REST API (user interface)
     # The Node, Miner and API part must run concurrently,
     # so we run each in its own thread.
-    threading.Thread(target=nbc.runForever,   args=(), daemon=True).start()
+    threading.Thread(target=_nbc.runForever,  args=(), daemon=True).start()
     threading.Thread(target=miner.runForever, args=(), daemon=True).start()
     threading.Thread(target=keepRerepl,       args=({'nbc': nbc},), daemon=True).start()
 

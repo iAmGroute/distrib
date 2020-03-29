@@ -16,7 +16,8 @@ def respond(self, data):
     assert len(data) == 40
     blockID   = int.from_bytes(data[ 0: 8], 'little')
     blockHash = data[ 8:40]
-    block     = self.nbc.blockchain.getBlock(blockID)
+    with self.nbc as nbc:
+        block = nbc.blockchain.getBlock(blockID)
     if block and block.thisHash == blockHash:
         reply = json.dumps(block.toJson()).encode('utf-8')
     else:

@@ -14,9 +14,7 @@ class NBC:
         self.blockchain = Blockchain(blockchainFile)
         self.wallet     = Wallet(self, keyFile)
         self.node       = node
-        self.node.setApp(self)
         self.miner      = miner
-        self.miner.setNBC(self)
         self.difficulty = 1 << (64 - Constants.DIFFICULTY)
         self.loop       = None
 

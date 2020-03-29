@@ -1,17 +1,28 @@
 
+import functools
+
 import hug
 
 # pylint: disable=protected-access
 
-nbc = None
+_nbc = None
 
 def init(nbcInstance):
-    global nbc
-    nbc = nbcInstance
+    global _nbc
+    _nbc = nbcInstance
+
+def usingNBC(func):
+    @functools.wraps(func)
+    def newFunc(*args, **kwargs):
+        global _nbc
+        with _nbc as cm:
+            res = func(cm, *args, **kwargs)
+        return res
+    return newFunc
 
 @hug.get()
-def status():
-    global nbc
+@usingNBC
+def status(nbc):
     resp = {
         'host': nbc.node.host,
         'port': nbc.node.port,
@@ -37,14 +48,14 @@ def status():
     return resp
 
 @hug.get()
-def save():
-    global nbc
+@usingNBC
+def save(nbc):
     nbc.blockchain.save()
     return {'result': True}
 
 @hug.get()
-def connectToNeighbor(host:str, port:int):
-    global nbc
+@usingNBC
+def connectToNeighbor(nbc, host:str, port:int):
     nbc.runAsync(nbc.node.connectToNeighbor(host, port))
     return {'result': True}
 
