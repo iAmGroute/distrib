@@ -6,47 +6,53 @@ from Block import Block
 class Blockchain:
 
     def __init__(self, filename):
-        self.filename = filename
-        self.blocks   = []
-        self.utxos    = {} # address -> list of (tx, amount)
-        self.loaded   = self.load()
-        # TODO: remove
-        if len(self.blocks) == 0:
-            raise ValueError('Empty blockchain')
+        self.blocks        = []
+        self.utxos         = {} # address -> list of (tx, amount)
+        self.file          = None
+        self.filePositions = []
+        self.load(filename)
 
-    def load(self):
-        try:
-            with open(self.filename) as f:
-                while True:
-                    line = f.readline()
-                    if not line:
-                        break
-                    if not line.startswith('> '):
-                        continue
-                    try:
-                        data = json.loads(line[2:])
-                    except json.JSONDecodeError:
-                        break
-                    self.blocks.append(Block.fromJson(data['b']))
-            return True
-        except FileNotFoundError:
-            return False
+    def __del__(self):
+        if self.file is not None:
+            self.file.close()
 
-    def save(self):
-        with open(self.filename, 'w') as f:
-            f.write('# Blockchain dump\n')
-            for block in self.blocks:
-                data = {
-                    'b': Block.toJson(block)
-                }
-                f.write('\n> ' + (json.dumps(data)))
-            f.write('\n')
+    def load(self, filename):
+        f = open(filename, 'r+')
+        while True:
+            pos  = f.tell()
+            line = f.readline()
+            if not line:                  break
+            if not line.startswith('> '): continue
+            try:
+                data = json.loads(line[2:])
+            except json.JSONDecodeError:
+                break
+            self.blocks.append(Block.fromJson(data['b']))
+            self.filePositions.append(pos)
+        f.seek(pos)
+        f.truncate()
+        self.file = f
+
+    def save(self, fromHeight):
+        f = self.file
+        # Check if we need to seek back and overwrite some blocks
+        if fromHeight < len(self.filePositions):
+            pos                = self.filePositions[fromHeight]
+            self.filePositions = self.filePositions[:fromHeight]
+            f.seek(pos)
+            f.truncate()
+        # Write all the new blocks
+        for block in self.blocks[fromHeight:]:
+            self.filePositions.append(f.tell())
+            data = {'b': Block.toJson(block)}
+            f.write('> ' + json.dumps(data) + '\n')
+        f.flush()
 
     def addBlock(self, block):
         last = self.blocks[-1]
         if block.myID == last.myID + 1 and block.prevHash == last.thisHash:
             self.blocks.append(block)
-            self.save()
+            self.save(block.myID)
             return True
         else:
             return False
@@ -88,9 +94,12 @@ class Blockchain:
             return False, 0
 
     def trySwapAt(self, height, blocks):
-        if height + len(blocks) > len(self.blocks):
+        # `blocks` are assumed to be valid
+        # and that their headers form a valid chain,
+        # so we only need to check their transactions' inputs and outputs
+        if height > 1 and height + len(blocks) > len(self.blocks):
             self.blocks = self.blocks[:height] + blocks
-            self.save()
+            self.save(height)
             return True
         else:
             return False
