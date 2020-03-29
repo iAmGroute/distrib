@@ -45,6 +45,6 @@ def save():
 @hug.get()
 def connectToNeighbor(host:str, port:int):
     global nbc
-    nbc.node.runAsync(nbc.node.connectToNeighbor(host, port))
+    nbc.runAsync(nbc.node.connectToNeighbor(host, port))
     return {'result': True}
 

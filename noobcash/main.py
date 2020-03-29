@@ -39,7 +39,7 @@ def main(host, port, blockchainFile, keyFile):
     NbcAPI.init(nbc)
     # The Node, Miner and API part must run concurrently,
     # so we run each in its own thread.
-    threading.Thread(target=node.runForever,  args=(), daemon=True).start()
+    threading.Thread(target=nbc.runForever,   args=(), daemon=True).start()
     threading.Thread(target=miner.runForever, args=(), daemon=True).start()
     threading.Thread(target=keepRerepl,       args=({'nbc': nbc},), daemon=True).start()
 

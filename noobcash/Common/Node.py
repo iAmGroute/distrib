@@ -13,7 +13,6 @@ class Node:
         self.host      = host
         self.port      = port
         self.neighbors = SlotMap()
-        self.loop      = None
         self.app       = None
 
     def setApp(self, app):
@@ -22,18 +21,8 @@ class Node:
     def removeMe(self, neighborID):
         del self.neighbors[neighborID]
 
-    def runAsync(self, coroutine):
-        self.loop.create_task(coroutine)
-
-    def runForever(self):
-        self.loop = asyncio.new_event_loop()
-        self.runAsync(self.runServer())
-        if self.app:
-            self.runAsync(self.app.main())
-        self.loop.run_forever()
-
     async def runServer(self):
-        await self.loop.create_server(
+        await asyncio.get_event_loop().create_server(
             lambda: NetworkProtocol(self.newConnectionMade),
             host=self.host, port=self.port,
             reuse_address=True
@@ -41,7 +30,7 @@ class Node:
         print('Server running')
 
     async def connectToNeighbor(self, host, port):
-        await self.loop.create_connection(
+        await asyncio.get_event_loop().create_connection(
             lambda: NetworkProtocol(self.newConnectionMade),
             host=host, port=port
         )

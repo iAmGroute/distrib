@@ -16,18 +16,28 @@ class NBC:
         self.miner      = miner
         self.miner.setNBC(self)
         self.difficulty = 1 << (64 - 25)
+        self.loop       = None
 
     async def main(self):
         while True:
             await asyncio.sleep(4)
             self.node.gossip(lambda rpc: rpc.advLatestBlockID())
 
+    def runAsync(self, coroutine):
+        self.loop.create_task(coroutine)
+
+    def runForever(self):
+        self.loop = asyncio.new_event_loop()
+        self.runAsync(self.node.runServer())
+        self.runAsync(self.main())
+        self.loop.run_forever()
+
     # A block is found externally (by NeighborRPC)
     def foundBlockID(self, neighborRPC, lastBlockID):
         if neighborRPC.isSyncing:
             return
         if lastBlockID > self.blockchain.getLastBlockID():
-            self.node.runAsync(self.consensusWith(neighborRPC, lastBlockID))
+            self.runAsync(self.consensusWith(neighborRPC, lastBlockID))
 
     # Miner calls this to get a block to mine
     def getBlockToMine(self):
