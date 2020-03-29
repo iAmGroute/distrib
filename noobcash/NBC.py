@@ -73,7 +73,11 @@ class NBC:
                 return
             print('Consensus: got block headers')
             ok, common = self.blockchain.validateHeaders(newblocks, self.difficulty)
-            print(ok, common, 'common', lastBlockID - common, 'different')
+            if ok:
+                print(common, 'common', lastBlockID - common, 'different')
+            else:
+                print('Consensus: BAD neighbor - invalid headers')
+                neighborRPC.neighbor.disconnect()
             blocks = newblocks + blocks
             if not ok:
                 return
@@ -88,7 +92,7 @@ class NBC:
             else:
                 # We have every block, but still can't find a common start,
                 # so we will assume bad neighbor/connection.
-                print('Consensus: BAD neighbor')
+                print('Consensus: BAD neighbor - no common start')
                 neighborRPC.neighbor.disconnect()
 
     async def _doConsensusWith(self, neighborRPC, blocks, common):
@@ -98,7 +102,7 @@ class NBC:
                 return
             block.timestamp = b.timestamp
             block.txs       = b.txs
-            if not block.isValid():
+            if not block.isValid(self.difficulty):
                 print('Consensus: INVALID block', block.myID)
                 return
         print('Consensus: trying to swap')

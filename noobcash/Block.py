@@ -62,7 +62,9 @@ class Block:
         self.prevHash = data[48:80]
 
     def calcPowHash(self):
-        return sha256().update(self.nonce + self.thisHash + self.prevHash).digest()
+        h = sha256()
+        h.update(self.nonce + self.thisHash + self.prevHash)
+        return h.digest()
 
     def isHeaderValid(self, dif):
         powHash = self.calcPowHash()
