@@ -7,7 +7,7 @@ class Blockchain:
 
     def __init__(self, filename):
         self.blocks        = []
-        self.utxos         = {} # address -> list of (tx, amount)
+        self.utxos         = {} # address -> list of (tx_ref, amount)
         self.file          = None
         self.filePositions = []
         self.load(filename)
@@ -18,6 +18,7 @@ class Blockchain:
 
     def load(self, filename):
         f = open(filename, 'r+')
+        self.blocks = []
         while True:
             pos  = f.tell()
             line = f.readline()
@@ -47,15 +48,6 @@ class Blockchain:
             data = {'b': Block.toJson(block)}
             f.write('> ' + json.dumps(data) + '\n')
         f.flush()
-
-    def addMinedBlock(self, block):
-        last = self.blocks[-1]
-        if block.myID == last.myID + 1 and block.prevHash == last.thisHash:
-            self.blocks.append(block)
-            self.save(block.myID)
-            return True
-        else:
-            return False
 
     def getBlock(self, blockID):
         return self.blocks[blockID] if blockID < len(self.blocks) else None
@@ -94,14 +86,56 @@ class Blockchain:
         except (IndexError, AssertionError):
             return False, 0
 
+    # TODO: complete
+    def _rollbackUtxos(self, height):
+        utxos = self.utxos.copy()
+        # undo the effect of blocks[height:] to the utxos
+        for block in blocks[-1 : height : -1]:
+            for tx in block.txs:
+                # no checks need to be done here
+                senderUtxos = utxos[tx.senderAddress]
+                # remove the outputs from the utxos and add the inputs
+        return utxos
+
+    # TODO: complete
+    def _addBlocks(self, blocks):
+        # `blocks` need to already be valid,
+        # only transaction inputs and outputs will be checked
+        if not blocks: return False
+        height = blocks[0].myID
+        utxos  = self._rollbackUtxos(height)
+        try:
+            for block in blocks:
+                for tx in block.txs:
+                    senderUtxos = utxos[tx.senderAddress]
+                    for txi in tx.inputs:
+                        # check if txi matches one of senderUtxos
+                        # also keep track of total NBCs
+                        bId, index = txi.blockID, txi.indexInBlock
+                        #...
+                    # check that the outputs sum up to the same NBCs
+                    # then remove the inputs from the utxos and add the outputs
+        except (KeyError, IndexError, AssertionError):
+            return False
+        self.blocks = self.blocks[:height] + blocks
+        self.utxos  = utxos
+        self.save(height)
+        return True
+
+    def addMinedBlock(self, block):
+        # `block` is assumed to be valid if it follows the last block
+        last = self.blocks[-1]
+        if block.myID == last.myID + 1 and block.prevHash == last.thisHash:
+            return self._addBlocks([block])
+        else:
+            return False
+
     def trySwapAt(self, height, blocks):
         # `blocks` are assumed to be valid
         # and that their headers form a valid chain,
         # so we only need to check their transactions' inputs and outputs
         if height > 1 and height + len(blocks) > len(self.blocks):
-            self.blocks = self.blocks[:height] + blocks
-            self.save(height)
-            return True
+            return self._addBlocks(blocks)
         else:
             return False
 
