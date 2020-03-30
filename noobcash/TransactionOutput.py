@@ -1,15 +1,12 @@
 
 class TransactionOutput:
 
-    def __init__(self, address, amount, spentAtBlock=0):
-        # Content
+    def __init__(self, address, amount):
         self.address = address
         self.amount  = amount
-        # Cache
-        self.spentAtBlock  = spentAtBlock
 
     def __repr__(self):
-        return f'{self.amount}nbc->a.{self.address[:8].hex()}..spent@{self.spentAtBlock}'
+        return f'{self.amount}nbc -> a.{self.address[:8].hex()}..'
 
     @staticmethod
     def fromJson(data):
