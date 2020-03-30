@@ -1,22 +1,25 @@
 
 class TransactionOutput:
 
-    def __init__(self, outputAddress, amount, spentAtBlock=0):
+    def __init__(self, address, amount, spentAtBlock=0):
         # Content
-        self.outputAddress = outputAddress
-        self.amount        = amount
+        self.address = address
+        self.amount  = amount
         # Cache
         self.spentAtBlock  = spentAtBlock
+
+    def __repr__(self):
+        return f'{self.amount}nbc->a.{self.address[:8].hex()}..spent@{self.spentAtBlock}'
 
     @staticmethod
     def fromJson(data):
         return TransactionOutput(bytes.fromhex(data[0]), data[1])
 
     def toJson(self):
-        return [self.outputAddress.hex(), self.amount]
+        return [self.address.hex(), self.amount]
 
     def toBytes(self):
-        res = self.outputAddress \
+        res = self.address \
             + self.amount.to_bytes(8, 'little')
         return res
 

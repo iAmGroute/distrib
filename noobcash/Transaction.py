@@ -16,6 +16,9 @@ class Transaction:
         self.inputs        = []
         self.outputs       = []
 
+    def __repr__(self):
+        return f'TX(s.{self.signature[:8].hex()}.. a.{self.senderAddress[:8].hex()}.. ~ i{self.inputs} ~ o{self.outputs})'
+
     @staticmethod
     def fromJson(data):
         tx = Transaction()

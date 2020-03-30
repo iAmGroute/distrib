@@ -5,6 +5,9 @@ class TransactionRef:
         self.blockID      = blockID
         self.indexInBlock = indexInBlock
 
+    def __repr__(self):
+        return f'@{self.blockID}:{self.indexInBlock}'
+
     @staticmethod
     def fromJson(data):
         return TransactionRef(data[0], data[1])

@@ -18,7 +18,8 @@ class Block:
         self.txs       = None
 
     def __repr__(self):
-        return f'Block({self.myID}, {self.nonce.hex()}, {self.thisHash.hex()}, {self.prevHash.hex()})'
+        txs = ''.join(['\n  ' + repr(tx) for tx in self.txs])
+        return f'Block(@{self.myID} n.{self.nonce.hex()} th.{self.thisHash[:8].hex()}.. ph.{self.prevHash[:8].hex()}.. t.{self.timestamp.hex()}{txs}\n)'
 
     @staticmethod
     def fromJson(data):
