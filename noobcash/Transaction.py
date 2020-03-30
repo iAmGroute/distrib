@@ -1,6 +1,8 @@
 
 from Common.Generic import listToBytes
 
+import NbcCrypto
+
 from TransactionRef    import TransactionRef
 from TransactionOutput import TransactionOutput
 
@@ -54,15 +56,19 @@ class Transaction:
         return self.signature + self.getContentBytes()
 
     def isSignatureValid(self):
-        # TODO: check signature against getContentBytes()
-        return bool(self.signature)
+        return self.signature and self.senderAddress \
+            and NbcCrypto.verifyByAddress(
+                address   = self.senderAddress,
+                signature = self.signature,
+                data      = self.getContentBytes()
+            )
 
     def areInputsUnique(self):
         ins = [(txi.blockID, txi.indexInBlock) for txi in self.inputs]
         return len(ins) == len(set(ins))
 
     def areOutputsUnique(self):
-        outs = [txo.outputAddress for txo in self.outputs]
+        outs = [txo.address for txo in self.outputs]
         return len(outs) == len(set(outs))
 
     def isValid(self):
