@@ -1,1 +1,2 @@
 hug==2.6.1
+cryptography==2.8

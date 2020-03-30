@@ -1,35 +1,42 @@
 
+import NbcCrypto
+
 class Wallet:
 
     def __init__(self, nbc, keyFile):
         self.nbc     = nbc
         self.keyFile = keyFile
-        self.pubkey  = None
-        self.privkey = None
-        if not self.loadKeys():
-            self.generateKeys()
+        self.key     = None
+        self.address = None
+        if not self.loadKey():
+            self.generateKey()
 
-    def loadKeys(self):
+    def _setKey(self, key):
+        self.key     = key
+        self.address = NbcCrypto.getAddress(key)
+
+    def loadKey(self):
         try:
-            with open(self.keyFile) as f:
-                # TODO: read pem data
-                f.read()
-                self.pubkey  = b'ABCDEF'
-                self.privkey = b'QWERTY'
+            with open(self.keyFile, 'rb') as f:
+                key = NbcCrypto.keyFromPEM(f.read())
+                self._setKey(key)
             return True
-        except FileNotFoundError:
+        except (FileNotFoundError, ValueError):
             return False
 
-    def generateKeys(self):
-        # TODO: generate random RSA keys
-        self.pubkey  = b'ABCDEF'
-        self.privkey = b'QWERTY'
-        with open(self.keyFile, 'w') as f:
-            # TODO: write pem data
-            f.write('PEM keys go here\n')
+    def generateKey(self):
+        key = NbcCrypto.generateKey()
+        self._setKey(key)
+        with open(self.keyFile, 'wb') as f:
+            f.write(NbcCrypto.keyToPEM(key))
+
+    def signTransaction(self, tx):
+        tx.senderAddress = self.address
+        content          = tx.getContentBytes()
+        tx.signature     = NbcCrypto.sign(self.key, content)
 
     def getBalance(self):
-        return self.nbc.blockchain.getBalance(self.pubkey)
+        return self.nbc.blockchain.getBalance(self.address)
 
     def getUTXOs(self):
-        return self.nbc.blockchain.getUTXOs(self.pubkey)
+        return self.nbc.blockchain.getUTXOs(self.address)
