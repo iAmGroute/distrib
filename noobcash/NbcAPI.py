@@ -49,6 +49,21 @@ def status(nbc):
 
 @hug.get()
 @usingNBC
+def getBlock(nbc, blockID:int):
+    b    = nbc.blockchain.blocks[blockID]
+    resp = {
+        'myID':      b.myID,
+        'powHash':   b.calcPowHash().hex(),
+        'nonce':     b.nonce.hex(),
+        'thisHash':  b.thisHash.hex(),
+        'prevHash':  b.prevHash.hex(),
+        'timestamp': int.from_bytes(b.timestamp, 'little'),
+        'txCount':   len(b.txs)
+    }
+    return resp
+
+@hug.get()
+@usingNBC
 def save(nbc):
     nbc.blockchain.save()
     return {'result': True}
