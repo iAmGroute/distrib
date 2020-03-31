@@ -49,7 +49,7 @@ def status(nbc):
 
 @hug.get()
 @usingNBC
-def getBlock(nbc, blockID:int):
+def getBlock(nbc, blockID:int, detailed:bool):
     b    = nbc.blockchain.blocks[blockID]
     resp = {
         'myID':      b.myID,
@@ -60,6 +60,17 @@ def getBlock(nbc, blockID:int):
         'timestamp': int.from_bytes(b.timestamp, 'little'),
         'txCount':   len(b.txs)
     }
+    if detailed:
+        resp['txs'] = [
+            {
+                'signature':     tx.signature.hex(),
+                'senderAddress': tx.senderAddress.hex(),
+                'inputCount' :   len(tx.inputs),
+                'outputCount' :  len(tx.outputs),
+                'coins':         sum([txo.amount for txo in tx.outputs])
+            }
+            for tx in b.txs
+        ]
     return resp
 
 @hug.get()

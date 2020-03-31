@@ -6,6 +6,7 @@
   import Connect             from './pages/Connect.svelte';
   import Network             from './pages/Network.svelte';
   import Blockchain          from './pages/Blockchain.svelte';
+  import Block               from './pages/Block.svelte';
 
   export let state;
 
@@ -15,7 +16,8 @@
     '/wallet':     [Wallet,     'Wallet'],
     '/connect':    [Connect,    'Connect'],
     '/network':    [Network,    'Network'],
-    '/blockchain': [Blockchain, 'Blockchain']
+    '/blockchain': [Blockchain, 'Blockchain'],
+    '/block':      [Block,      'Block']
   };
 
   let [pageComponent, pageTitle] = pages['/status'];
