@@ -1,19 +1,21 @@
 <script>
   import {location, replace} from 'svelte-spa-router';
-  import Home    from './pages/Home.svelte';
-  import Status  from './pages/Status.svelte';
-  import Wallet  from './pages/Wallet.svelte';
-  import Connect from './pages/Connect.svelte';
-  import Network from './pages/Network.svelte';
+  import Home                from './pages/Home.svelte';
+  import Status              from './pages/Status.svelte';
+  import Wallet              from './pages/Wallet.svelte';
+  import Connect             from './pages/Connect.svelte';
+  import Network             from './pages/Network.svelte';
+  import Blockchain          from './pages/Blockchain.svelte';
 
   export let state;
 
   const pages = {
-    '/':        [Home,     null],
-    '/status':  [Status,  'Status'],
-    '/wallet':  [Wallet,  'Wallet'],
-    '/connect': [Connect, 'Connect'],
-    '/network': [Network, 'Network']
+    '/':           [Home,       null],
+    '/status':     [Status,     'Status'],
+    '/wallet':     [Wallet,     'Wallet'],
+    '/connect':    [Connect,    'Connect'],
+    '/network':    [Network,    'Network'],
+    '/blockchain': [Blockchain, 'Blockchain']
   };
 
   let [pageComponent, pageTitle] = pages['/status'];

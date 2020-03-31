@@ -19,7 +19,7 @@
     <div class="small-box bg-primary">
       <div class="inner">
         <h3>Status</h3>
-        <p>Blockchain has {state.content.status.blockchain.length} blocks</p>
+        <p>Listening on [{state.content.status.host}]:{state.content.status.port}</p>
       </div>
       <div class="icon">
         <i class="fas fa-tachometer-alt"></i>
@@ -33,10 +33,24 @@
     <div class="small-box bg-primary">
       <div class="inner">
         <h3>Wallet</h3>
-        <p>Balance is {state.content.status.balance} NBC</p>
+        <p>{state.content.status.balance} NBC</p>
       </div>
       <div class="icon">
         <i class="fas fa-wallet"></i>
+      </div>
+    </div>
+  </a>
+</div>
+
+<div class="col-lg-3 col-6">
+  <a href="#/blockchain">
+    <div class="small-box bg-primary">
+      <div class="inner">
+        <h3>Blockchain</h3>
+        <p>{state.content.status.blockchain.length} blocks</p>
+      </div>
+      <div class="icon">
+        <i class="fas fa-link"></i>
       </div>
     </div>
   </a>
@@ -61,7 +75,7 @@
     <div class="small-box bg-primary">
       <div class="inner">
         <h3>Connect</h3>
-        <p>Click to connect to other nodes</p>
+        <p>to other nodes</p>
       </div>
       <div class="icon">
         <i class="fas fa-plug"></i>

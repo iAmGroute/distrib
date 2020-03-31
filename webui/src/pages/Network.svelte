@@ -10,14 +10,14 @@
         {state.content.status.neighbors.length}
       </span>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body table-responsive p-0">
       <table class="table table-striped">
         <thead>
           <tr>
             <th>#</th>
             <th>Host</th>
             <th>Port</th>
-            <th>Latest block</th>
+            <th>Blocks</th>
             <th>Connected</th>
             <th>Status</th>
           </tr>
@@ -28,7 +28,7 @@
               <td>{i}</td>
               <td>{peerName[0]}</td>
               <td>{peerName[1]}</td>
-              <td>{lastBlockID}</td>
+              <td>{lastBlockID + 1}</td>
               <td>
                 <span class={connected ? 'badge badge-success' : 'badge badge-danger'}>
                   {connected ? 'OK' : 'DISC'}

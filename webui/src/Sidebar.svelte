@@ -32,6 +32,12 @@
           </a>
         </li>
         <li class="nav-item">
+          <a href="#/blockchain" use:active class="nav-link">
+            <i class="nav-icon fas fa-link"></i>
+            <p>Blockchain</p>
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="#/network" use:active class="nav-link">
             <i class="nav-icon fas fa-network-wired"></i>
             <p>Network</p>
