@@ -5,7 +5,6 @@ from Common.Generic import find
 from Block          import Block
 from TransactionRef import TransactionRef
 
-
 class Blockchain:
 
     def __init__(self, filename):
