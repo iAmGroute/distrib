@@ -140,3 +140,5 @@ env_dev.js
 
 # Noobcash data
 *.pem
+
+.vscode
