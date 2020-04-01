@@ -144,7 +144,7 @@ class Blockchain:
         for block in self.blocks[-1: height: -1]:
             for index,tx in enumerate(block.txs):
                 # no checks need to be done here
-                senderUtxos = utxos[tx.senderAddress]
+                #senderUtxos = utxos[tx.senderAddress]
                 #  from the utxos and add the inputs
 
                 # remove the outputs from utxos
