@@ -1,7 +1,9 @@
 
 import json
 
-from Block import Block
+from Common.Generic import find
+from Block          import Block
+from TransactionRef import TransactionRef
 
 class Blockchain:
 
@@ -28,7 +30,8 @@ class Blockchain:
                 data = json.loads(line[2:])
             except json.JSONDecodeError:
                 break
-            self.blocks.append(Block.fromJson(data['b']))
+            if not self._addBlocks([Block.fromJson(data['b'])], noSave=True):
+                break
             self.filePositions.append(pos)
         f.seek(pos)
         f.truncate()
@@ -61,7 +64,7 @@ class Blockchain:
 
     def getBalance(self, address):
         utxos = self.getUTXOs(address)
-        return sum([amount for tx, amount in utxos])
+        return sum([amount for _, amount in utxos])
 
     def getBlocks(self, fromID, toID):
         # Returns a (new) list of the current blockchain's blocks
@@ -86,19 +89,27 @@ class Blockchain:
         except (IndexError, AssertionError):
             return False, 0
 
-    # TODO: complete
     def _rollbackUtxos(self, height):
         utxos = self.utxos.copy()
-        # undo the effect of blocks[height:] to the utxos
-        for block in blocks[-1 : height : -1]:
-            for tx in block.txs:
-                # no checks need to be done here
+        # undo the effect of `self.blocks[height:]` to the utxos
+        for block in self.blocks[-1 : height : -1]:
+            for txIndex, tx in enumerate(block.txs):
+                txRef = TransactionRef(block.myID, txIndex)
+                # remove the outputs from the receivers' utxos
+                for txo in tx.outputs:
+                    receiverUtxos = utxos[txo.address]
+                    i, _ = find(receiverUtxos, lambda utxo: utxo[0] == txRef)
+                    del receiverUtxos[i]
+                # and add the inputs to the sender's utxos
                 senderUtxos = utxos[tx.senderAddress]
-                # remove the outputs from the utxos and add the inputs
+                for txi in tx.inputs:
+                    inputTx = self.blocks[txi.blockID].txs[txi.indexInBlock]
+                    _, txo  = find(inputTx.outputs, lambda txo: txo.address == tx.senderAddress)
+                    senderUtxos.append((txi, txo.amount))
         return utxos
 
     # TODO: complete
-    def _addBlocks(self, blocks):
+    def _addBlocks(self, blocks, noSave=False):
         # `blocks` need to already be valid,
         # only transaction inputs and outputs will be checked
         if not blocks: return False
@@ -106,20 +117,31 @@ class Blockchain:
         utxos  = self._rollbackUtxos(height)
         try:
             for block in blocks:
-                for tx in block.txs:
-                    senderUtxos = utxos[tx.senderAddress]
+                for txIndex, tx in enumerate(block.txs):
+                    txRef       = TransactionRef(block.myID, txIndex)
+                    senderUtxos = utxos.get(tx.senderAddress, [])
+                    total       = 0
+                    # remove the inputs from the sender's utxos
                     for txi in tx.inputs:
-                        # check if txi matches one of senderUtxos
-                        # also keep track of total NBCs
-                        bId, index = txi.blockID, txi.indexInBlock
-                        #...
-                    # check that the outputs sum up to the same NBCs
-                    # then remove the inputs from the utxos and add the outputs
+                        i, utxo = find(senderUtxos, lambda utxo: utxo[0] == txi)
+                        total  += utxo[1]
+                        del senderUtxos[i]
+                    # and add the outputs to the receivers' utxos
+                    for txo in tx.outputs:
+                        total        -= txo.amount
+                        receiverUtxos = utxos.get(txo.address, [])
+                        if not receiverUtxos:
+                            utxos[txo.address] = receiverUtxos
+                        receiverUtxos.append((txRef, txo.amount))
+                    # make sure the total input - output is zero,
+                    # except for block 0
+                    if block.myID != 0:
+                        assert total == 0
         except (KeyError, IndexError, AssertionError):
             return False
         self.blocks = self.blocks[:height] + blocks
         self.utxos  = utxos
-        self.save(height)
+        if not noSave: self.save(height)
         return True
 
     def addMinedBlock(self, block):
