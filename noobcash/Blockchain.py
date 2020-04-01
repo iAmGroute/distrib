@@ -104,13 +104,13 @@ class Blockchain:
         senderUtxos = utxos[tx.senderAddress]
         sendertxs = []
         for txref, amount in senderUtxos:
-            sendertxs.append((_txfromref(txref), amount))
+            sendertxs.append((self._txfromref(txref), amount))
         # inputs iteration
         valid_trans = False
         total_in = 0
         for txi in tx.inputs:
             # check if txi matches one of senderUtxos
-            txi = _txfromref(txi)
+            txi = self._txfromref(txi)
             for stx in sendertxs:
                 if txi.senderAddress == stx[0].senderAddress:
                     total_in = stx[1]
@@ -153,7 +153,7 @@ class Blockchain:
 
                 # add the inputs to utxos
                 for txi in tx.inputs:
-                    txi = _txfromref(txi)
+                    txi = self._txfromref(txi)
                     address = txi.senderAddress
                     tref = TransactionRef(block.myID, index)
                     utxos.update(address=[(tref, txi.amount)])
@@ -182,7 +182,7 @@ class Blockchain:
 
                     # remove inputs from utxos
                     for txi in tx.inputs:
-                        txi = _txfromref(txi)
+                        txi = self._txfromref(txi)
                         del utxos[txi.senderAddress]
 
                     # add outputs in utxos
