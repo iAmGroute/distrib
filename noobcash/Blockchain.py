@@ -141,7 +141,7 @@ class Blockchain:
     def _rollbackUtxos(self, height):
         utxos = self.utxos.copy()
         # undo the effect of blocks[height:] to the utxos
-        for block in blocks[-1: height: -1]:
+        for block in self.blocks[-1: height: -1]:
             for index,tx in enumerate(block.txs):
                 # no checks need to be done here
                 senderUtxos = utxos[tx.senderAddress]
@@ -154,9 +154,8 @@ class Blockchain:
                 # add the inputs to utxos
                 for txi in tx.inputs:
                     txi = self._txfromref(txi)
-                    address = txi.senderAddress
                     tref = TransactionRef(block.myID, index)
-                    utxos.update(address=[(tref, txi.amount)])
+                    utxos.update({txi.senderAddress:[(tref, txi.amount)]})
 
         return utxos
 
@@ -188,9 +187,8 @@ class Blockchain:
                     # add outputs in utxos
                     for txi in tx.outputs:
                         # add to utxo: key->receiver_ref  value->(sender_tref, amount)
-                        receiver_add = txi.address
                         sender_tref = TransactionRef(block.myID, index)
-                        utxos.update(receiver_add=[(sender_tref, txi.amount)])
+                        utxos.update({txi.address:[(sender_tref, txi.amount)]})
 
 
         except (KeyError, IndexError, AssertionError):
