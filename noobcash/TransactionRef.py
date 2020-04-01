@@ -8,6 +8,10 @@ class TransactionRef:
     def __repr__(self):
         return f'@{self.blockID}:{self.indexInBlock}'
 
+    def __eq__(self, other):
+        return  self.blockID      == other.blockID \
+            and self.indexInBlock == other.indexInBlock
+
     @staticmethod
     def fromJson(data):
         return TransactionRef(data[0], data[1])

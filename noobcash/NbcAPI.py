@@ -40,8 +40,8 @@ def status(nbc):
             'length': len(nbc.blockchain.blocks)
         },
         'utxos': [
-            (tx.thisHash.hex(), amount)
-            for tx, amount in nbc.wallet.getUTXOs()
+            (txRef.toJson(), amount)
+            for txRef, amount in nbc.wallet.getUTXOs()
         ],
         'balance': nbc.wallet.getBalance()
     }

@@ -12,6 +12,7 @@ disable=
     too-many-public-methods,
     too-many-instance-attributes,
     global-statement,
+    cell-var-from-loop,
     no-else-return,
     useless-return,
     fixme
