@@ -38,8 +38,11 @@ class Node:
     def newConnectionMade(self, link):
         peerName = link.transport.get_extra_info('peername')
         print('New connection:', peerName)
-        existingNeighbor = find(self.neighbors, lambda item: item.peerName == peerName)
-        if existingNeighbor is not None:
+        try:
+            _, existingNeighbor = find(self.neighbors, lambda item: item.peerName == peerName)
+        except ValueError:
+            pass
+        else:
             existingNeighbor.disconnect()
         neighbor      = Neighbor(self, -1, link, peerName)
         neighbor.myID = self.neighbors.append(neighbor)

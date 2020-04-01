@@ -13,10 +13,10 @@ def toTuple(thing):
     return thing if isinstance(thing, tuple) else (thing,)
 
 def find(iterable, f):
-    for item in iterable:
+    for index, item in enumerate(iterable):
         if f(item):
-            return item
-    return None
+            return index, item
+    raise ValueError('No item found')
 
 def lowerFirst(name):
     return name[0].lower() + name[1:]
