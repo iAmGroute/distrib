@@ -2,11 +2,15 @@
 import time
 import asyncio
 
+from collections        import deque
+
 import Constants
 
-from Block      import Block
-from Blockchain import Blockchain
-from Wallet     import Wallet
+from Block              import Block
+from Blockchain         import Blockchain
+from Wallet             import Wallet
+from Transaction        import Transaction
+from TransactionOutput  import TransactionOutput
 
 class NBC:
 
@@ -17,6 +21,7 @@ class NBC:
         self.miner      = miner
         self.difficulty = 1 << (64 - Constants.DIFFICULTY)
         self.loop       = None
+        self.mempool    = deque()
 
     async def main(self):
         while True:
@@ -39,6 +44,28 @@ class NBC:
         if lastBlockID > self.blockchain.getLastBlockID():
             self.runAsync(self.consensusWith(neighborRPC, lastBlockID))
 
+    def createTransaction(self, address, amount):
+        if amount < 0:
+            return None
+        tx               = Transaction()
+        tx.senderAddress = self.wallet.address
+        # find inputs from utxos and calculate total input value
+        inputTotal = 0
+        utxos      = self.blockchain.utxos.get(tx.senderAddress, [])
+        for txRef, txAmount in utxos:
+            tx.inputs.append(txRef)
+            inputTotal += txAmount
+        if inputTotal < amount:
+            return None
+        # 2 outputs
+        # one output for receiver
+        tx.outputs.append(TransactionOutput(address, amount))
+        # and another for the change, back to sender
+        tx.outputs.append(TransactionOutput(tx.senderAddress, inputTotal - amount))
+        # Put a chicken stamp in the transaction so Alice can eat it :)
+        self.wallet.signTransaction(tx)
+        return tx
+
     # Miner calls this to get a block to mine
     def getBlockToMine(self):
         b = Block()
@@ -46,6 +73,12 @@ class NBC:
         b.prevHash  = self.blockchain.blocks[b.myID - 1].thisHash
         b.timestamp = int(time.time()).to_bytes(8, 'little')
         b.txs       = []
+        for _ in range(Constants.CAPACITY):
+            if self.mempool:
+                tx = self.mempool.pop()
+                b.txs.append(tx)
+            else:
+                break
         b.thisHash  = b.calcThisHash()
         return b, self.difficulty
 

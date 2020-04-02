@@ -3,3 +3,4 @@ KEY_SIZE          = 2048
 RSA_EXPONENT      = 65537
 DIFFICULTY        = 25
 BLOCK_HEADER_SIZE = 80
+CAPACITY          = 5
