@@ -1,10 +1,12 @@
 
 from . import AdvLatestBlockID
+from . import AdvTransaction
 from . import GetBlock
 from . import GetBlockHeaders
 
 modules = [
     AdvLatestBlockID,
+    AdvTransaction,
     GetBlock,
     GetBlockHeaders,
 ]
@@ -31,11 +33,14 @@ class NeighborRPC:
     def advLatestBlockID(self):
         return AdvLatestBlockID.request(self)
 
-    def getBlockHeaders(self, fromID, toID):
-        return GetBlockHeaders.request(self, fromID, toID)
+    def advTransaction(self, tx):
+        return AdvTransaction.request(self, tx)
 
     def getBlock(self, blockID, blockHash):
         return GetBlock.request(self, blockID, blockHash)
+
+    def getBlockHeaders(self, fromID, toID):
+        return GetBlockHeaders.request(self, fromID, toID)
 
     def setLastBlockID(self, lastBlockID):
         self.lastBlockID = lastBlockID

@@ -66,6 +66,11 @@ class NBC:
         self.wallet.signTransaction(tx)
         return tx
 
+    # Broadcasts transaction `tx` to our neighbors
+    # Called by NbcAPI
+    def broadcastTransaction(self, tx):
+        self.node.multicast(lambda rpc: rpc.advTransaction(tx))
+
     # Miner calls this to get a block to mine
     def getBlockToMine(self):
         b = Block()
