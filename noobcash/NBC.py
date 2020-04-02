@@ -57,11 +57,14 @@ class NBC:
             inputTotal += txAmount
         if inputTotal < amount:
             return None
-        # 2 outputs
-        # one output for receiver
-        tx.outputs.append(TransactionOutput(address, amount))
-        # and another for the change, back to sender
-        tx.outputs.append(TransactionOutput(tx.senderAddress, inputTotal - amount))
+        # 2 outputs, except if receiver == sender
+        if address == tx.senderAddress:
+            tx.outputs.append(TransactionOutput(address, inputTotal))
+        else:
+            # one output for receiver
+            tx.outputs.append(TransactionOutput(address, amount))
+            # and another for the change, back to sender
+            tx.outputs.append(TransactionOutput(tx.senderAddress, inputTotal - amount))
         # Put a chicken stamp in the transaction so Alice can eat it :)
         self.wallet.signTransaction(tx)
         return tx
