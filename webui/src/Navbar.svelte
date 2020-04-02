@@ -7,13 +7,13 @@
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
   <!-- Left navbar links -->
   <ul class="navbar-nav">
-    <li class="nav-item d-none d-sm-inline-block">
-      <a href="#/wallet" use:active class="nav-link">{state.content.status.balance} NBC</a>
+    <li class="nav-item">
+      <a href="#/wallet" use:active class="nav-link">{state.content.status.wallet.balance} NBC</a>
     </li>
-    <li class="nav-item d-none d-sm-inline-block">
+    <li class="nav-item">
       <a href="#/blockchain" use:active class="nav-link">{state.content.status.blockchain.length} Blocks</a>
     </li>
-    <li class="nav-item d-none d-sm-inline-block">
+    <li class="nav-item">
       <a href="#/network" use:active class="nav-link">{state.content.status.neighbors.length} Neighbors</a>
     </li>
   </ul>

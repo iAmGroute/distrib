@@ -41,11 +41,14 @@ def status(nbc):
         'blockchain': {
             'length': len(nbc.blockchain.blocks)
         },
-        'utxos': [
-            (txRef.toJson(), amount)
-            for txRef, amount in nbc.wallet.getUTXOs()
-        ],
-        'balance': nbc.wallet.getBalance()
+        'wallet': {
+            'address': nbc.wallet.address.hex(),
+            'balance': nbc.wallet.getBalance(),
+            'utxos': [
+                (txRef.toJson(), amount)
+                for txRef, amount in nbc.wallet.getUTXOs()
+            ]
+        }
     }
     return resp
 
@@ -115,5 +118,5 @@ def connectToNeighbor(nbc, host:str, port:int):
 def sendCoins(nbc, address:str, amount:int):
     tx = nbc.createTransaction(bytes.fromhex(address), amount)
     if tx:
-        nbc.mempool.append()
+        nbc.mempool.append(tx)
     return {'result': bool(tx)}

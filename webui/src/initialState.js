@@ -9,8 +9,11 @@ const initialState = {
             'blockchain': {
                 'length': 0
             },
-            'utxos': [],
-            'balance': null
+            'wallet': {
+                'address': null,
+                'balance': null,
+                'utxos': []
+            }
         }
     }
 };

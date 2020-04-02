@@ -33,7 +33,7 @@
     <div class="small-box bg-primary">
       <div class="inner">
         <h3>Wallet</h3>
-        <p>{state.content.status.balance} NBC</p>
+        <p>{state.content.status.wallet.balance} NBC</p>
       </div>
       <div class="icon">
         <i class="fas fa-wallet"></i>
