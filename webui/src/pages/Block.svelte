@@ -3,7 +3,7 @@
   import { printHash, printDateLong } from '../lib.js';
   import { get }                      from '../api.js';
 
-  let blockID = parseInt($querystring);
+  const blockID = parseInt($querystring);
 
   async function getBlock(i) {
     return await get('getBlock', {blockID: i, detailed: true});
@@ -89,7 +89,7 @@
                 <td>{printHash(senderAddress)}...</td>
                 <td>{inputCount}</td>
                 <td>{outputCount}</td>
-                <td>{coins}</td>
+                <td>{coins} NBC</td>
               </tr>
             {/each}
           </tbody>

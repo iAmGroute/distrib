@@ -6,7 +6,7 @@
 
   async function getFirstBlocks() {
     const from   = 0;
-    const to     = 10;
+    const to     = Math.min(10, state.content.status.blockchain.length);
     const blocks = [];
     for (let i = from; i < to; i++) {
       blocks.push(await get('getBlock', {blockID: i, detailed: false}));
@@ -15,7 +15,7 @@
   }
   async function getLastBlocks() {
     const from   = state.content.status.blockchain.length - 1;
-    const to     = from - 10;
+    const to     = Math.max(from - 10, -1);
     const blocks = [];
     for (let i = from; i > to; i--) {
       blocks.push(await get('getBlock', {blockID: i, detailed: false}));
