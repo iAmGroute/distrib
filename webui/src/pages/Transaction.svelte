@@ -3,9 +3,14 @@
   import { printHash, printDateLong } from '../lib.js';
   import { get }                      from '../api.js';
 
-  const txRef        = $querystring.split(':');
-  const blockID      = parseInt(txRef[0]);
-  const indexInBlock = parseInt(txRef[1]);
+  let blockID      = 0;
+  let indexInBlock = 0;
+
+  querystring.subscribe(v => {
+    const txRef  = v.split(':');
+    blockID      = parseInt(txRef[0]);
+    indexInBlock = parseInt(txRef[1]);
+  });
 
   async function getTransaction(blockID, indexInBlock) {
     return await get('getTransaction', {blockID, indexInBlock});
