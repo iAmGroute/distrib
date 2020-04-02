@@ -45,6 +45,8 @@ class NBC:
             self.runAsync(self.consensusWith(neighborRPC, lastBlockID))
 
     def createTransaction(self, address, amount):
+        if amount < 0:
+            return None
         tx               = Transaction()
         tx.senderAddress = self.wallet.address
         # find inputs from utxos and calculate total input value
@@ -53,6 +55,8 @@ class NBC:
         for txRef, txAmount in utxos:
             tx.inputs.append(txRef)
             inputTotal += txAmount
+        if inputTotal < amount:
+            return None
         # 2 outputs
         # one output for receiver
         tx.outputs.append(TransactionOutput(address, amount))
