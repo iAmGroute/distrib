@@ -3,6 +3,8 @@ import functools
 
 import hug
 
+from Common.Generic import find
+
 # pylint: disable=protected-access
 
 _nbc = None
@@ -75,9 +77,32 @@ def getBlock(nbc, blockID:int, detailed:bool):
 
 @hug.get()
 @usingNBC
-def save(nbc):
-    nbc.blockchain.save()
-    return {'result': True}
+def getTransaction(nbc, blockID:int, indexInBlock:int):
+    tx   = nbc.blockchain.blocks[blockID].txs[indexInBlock]
+    resp = {
+        'signature':     tx.signature.hex(),
+        'senderAddress': tx.senderAddress.hex(),
+        'coins':         sum([txo.amount for txo in tx.outputs]),
+        'inputs': [
+            {
+                'inTxBlockID': txi.blockID,
+                'inTxIndex':   txi.indexInBlock,
+                'amount':      find(
+                    nbc.blockchain.blocks[txi.blockID].txs[txi.indexInBlock].outputs,
+                    lambda txo: txo.address == tx.senderAddress
+                )[1]
+            }
+            for txi in tx.inputs
+        ],
+        'outputs': [
+            {
+                'address': txo.address.hex(),
+                'amount':  txo.amount
+            }
+            for txo in tx.outputs
+        ]
+    }
+    return resp
 
 @hug.get()
 @usingNBC
