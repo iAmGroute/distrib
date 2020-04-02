@@ -70,6 +70,7 @@ class NBC:
         b.myID      = len(self.blockchain.blocks)
         b.prevHash  = self.blockchain.blocks[b.myID - 1].thisHash
         b.timestamp = int(time.time()).to_bytes(8, 'little')
+        b.txs=[]
         for i in range(Constants.CAPACITY):
             if self.mempool:
                 receiver_address, amount=self.mempool.pop()
