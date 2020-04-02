@@ -7,17 +7,19 @@
   import Network             from './pages/Network.svelte';
   import Blockchain          from './pages/Blockchain.svelte';
   import Block               from './pages/Block.svelte';
+  import Transaction         from './pages/Transaction.svelte';
 
   export let state;
 
   const pages = {
-    '/':           [Home,       null],
-    '/status':     [Status,     'Status'],
-    '/wallet':     [Wallet,     'Wallet'],
-    '/connect':    [Connect,    'Connect'],
-    '/network':    [Network,    'Network'],
-    '/blockchain': [Blockchain, 'Blockchain'],
-    '/block':      [Block,      'Block']
+    '/':           [Home,        null],
+    '/status':     [Status,      'Status'],
+    '/wallet':     [Wallet,      'Wallet'],
+    '/connect':    [Connect,     'Connect'],
+    '/network':    [Network,     'Network'],
+    '/blockchain': [Blockchain,  'Blockchain'],
+    '/block':      [Block,       'Block'],
+    '/tx':         [Transaction, 'Transaction']
   };
 
   let [pageComponent, pageTitle] = pages['/status'];
