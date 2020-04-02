@@ -1,16 +1,17 @@
 
 import time
 import asyncio
-import collections
+
+from collections        import deque
 
 import Constants
 
-from Block      import Block
-from Blockchain import Blockchain
-from Wallet     import Wallet
-from Transaction import Transaction
-from TransactionRef import TransactionRef
-from TransactionOutput import TransactionOutput
+from Block              import Block
+from Blockchain         import Blockchain
+from Wallet             import Wallet
+
+from Transaction        import Transaction
+from TransactionOutput  import TransactionOutput
 class NBC:
 
     def __init__(self, blockchainFile, keyFile, node, miner):
@@ -20,7 +21,7 @@ class NBC:
         self.miner      = miner
         self.difficulty = 1 << (64 - Constants.DIFFICULTY)
         self.loop       = None
-        self.mempool    = collections.deque([])
+        self.mempool    = deque()
 
     async def main(self):
         while True:
@@ -43,23 +44,23 @@ class NBC:
         if lastBlockID > self.blockchain.getLastBlockID():
             self.runAsync(self.consensusWith(neighborRPC, lastBlockID))
 
-    def _create_transaction(self, receiver_address, amount, b_id, t_index):
-        tx=Transaction()
-        tx.senderAddress=self.wallet.address
-
-        #we assume that a user(NBC) can have only 1 wallet??? in this case we only have 1 input
-        #in bitcoin a user can have multiple wallets so there would be multiple outputs
-        inTxRef=TransactionRef(b_id,t_index)
-        tx.inputs.append(inTxRef)
-
+    def create_transaction(self, receiver_address, amount):
+        tx = Transaction()
+        tx.senderAddress = self.wallet.address
+        #find inputs from utxos and calculate total_in
+        total_in = 0
+        for address, values in self.blockchain.utxos.items():
+            if tx.senderAddress == address:
+                for txref, t_amount in values:
+                    tx.inputs.append(txref)
+                    total_in += t_amount
         #2 outputs total
         #one output for receiver
-        outTxReceiver=TransactionOutput(receiver_address,amount)
+        outTxReceiver = TransactionOutput(receiver_address,amount)
         tx.outputs.append(outTxReceiver)
         #and another output for change back to sender
-        outTxSender=TransactionOutput(self.wallet.address,self.wallet.getBalance()-amount)
+        outTxSender = TransactionOutput(self.wallet.address,total_in-amount)
         tx.outputs.append(outTxSender)
-        
         #Put a chicken stamp in the transaction so Alice can eat it
         self.wallet.signTransaction(tx)
         return tx
@@ -70,13 +71,11 @@ class NBC:
         b.myID      = len(self.blockchain.blocks)
         b.prevHash  = self.blockchain.blocks[b.myID - 1].thisHash
         b.timestamp = int(time.time()).to_bytes(8, 'little')
-        b.txs=[]
-        for i in range(Constants.CAPACITY):
+        b.txs       = []
+        for _ in range(Constants.CAPACITY):
             if self.mempool:
-                receiver_address, amount=self.mempool.pop()
-                tx=self._create_transaction(receiver_address,amount, b.myID, i)
+                tx = self.mempool.pop()
                 b.txs.append(tx)
-                #We assume tha UTXOS are taken care in blockchain._addBlocks? I hope so :p
             else:
                 break
         b.thisHash  = b.calcThisHash()

@@ -88,12 +88,7 @@ def connectToNeighbor(nbc, host:str, port:int):
 
 @hug.get()
 @usingNBC
-#name t because it is defined as such in exercise requirments? :/
-def t(nbc, receiver_address:str, amount:int):
-    nbc.mempool.append((receiver_address, amount))
-    resp = {
-        'Sender_Address':       nbc.wallet.address,
-        'Receiver_Address':     receiver_address,
-        'Amount':               amount
-    }
-    return resp
+def sendCoins(nbc, receiver_address:str, amount:int):
+    tx=nbc.create_transaction(receiver_address,amount)
+    nbc.mempool.append(tx)
+    return {'result': True}
