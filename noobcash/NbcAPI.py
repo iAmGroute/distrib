@@ -85,10 +85,8 @@ def connectToNeighbor(nbc, host:str, port:int):
     nbc.runAsync(nbc.node.connectToNeighbor(host, port))
     return {'result': True}
 
-
 @hug.get()
 @usingNBC
-def sendCoins(nbc, receiver_address:str, amount:int):
-    tx=nbc.create_transaction(receiver_address,amount)
-    nbc.mempool.append(tx)
+def sendCoins(nbc, address:str, amount:int):
+    nbc.mempool.append(nbc.createTransaction(address, amount))
     return {'result': True}

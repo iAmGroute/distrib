@@ -44,23 +44,21 @@ class NBC:
         if lastBlockID > self.blockchain.getLastBlockID():
             self.runAsync(self.consensusWith(neighborRPC, lastBlockID))
 
-    def create_transaction(self, receiver_address, amount):
-        tx = Transaction()
+    def createTransaction(self, address, amount):
+        tx               = Transaction()
         tx.senderAddress = self.wallet.address
-        #find inputs from utxos and calculate total_in
-        total_in = 0
-        values = self.blockchain.utxos.get(tx.senderAddress, [])
-        for txref, t_amount in values:
-            tx.inputs.append(txref)
-            total_in += t_amount
-        #2 outputs total
-        #one output for receiver
-        outTxReceiver = TransactionOutput(receiver_address,amount)
-        tx.outputs.append(outTxReceiver)
-        #and another output for change back to sender
-        outTxSender = TransactionOutput(self.wallet.address,total_in-amount)
-        tx.outputs.append(outTxSender)
-        #Put a chicken stamp in the transaction so Alice can eat it
+        # find inputs from utxos and calculate total input value
+        inputTotal = 0
+        utxos      = self.blockchain.utxos.get(tx.senderAddress, [])
+        for txRef, txAmount in utxos:
+            tx.inputs.append(txRef)
+            inputTotal += txAmount
+        # 2 outputs
+        # one output for receiver
+        tx.outputs.append(TransactionOutput(address, amount))
+        # and another for the change, back to sender
+        tx.outputs.append(TransactionOutput(tx.address, inputTotal - amount))
+        # Put a chicken stamp in the transaction so Alice can eat it :)
         self.wallet.signTransaction(tx)
         return tx
 
@@ -109,7 +107,6 @@ class NBC:
             else:
                 print('Consensus: BAD neighbor - invalid headers')
                 neighborRPC.neighbor.disconnect()
-
             blocks = newblocks + blocks
             if not ok:
                 return
