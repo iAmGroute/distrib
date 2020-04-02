@@ -1,4 +1,6 @@
 
+import time
+
 from hashlib import sha256
 
 class Miner:
@@ -17,6 +19,10 @@ class Miner:
         while self.enabled:
             with self.nbc as nbc:
                 b, dif = nbc.getBlockToMine()
+            # Skip empty blocks
+            if not b.txs:
+                time.sleep(0.1)
+                continue
             print('Mining block', b.myID)
             d = b.thisHash + b.prevHash
             n = 0
