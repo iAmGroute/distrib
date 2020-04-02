@@ -117,6 +117,5 @@ def connectToNeighbor(nbc, host:str, port:int):
 @usingNBC
 def sendCoins(nbc, address:str, amount:int):
     tx = nbc.createTransaction(bytes.fromhex(address), amount)
-    if tx:
-        nbc.mempool.append(tx)
-    return {'result': bool(tx)}
+    ok = bool(tx) and nbc.enqueTransaction(tx) and nbc.broadcastTransaction(tx)
+    return {'result': ok}

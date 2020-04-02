@@ -12,6 +12,9 @@ class TransactionRef:
         return  self.blockID      == other.blockID \
             and self.indexInBlock == other.indexInBlock
 
+    def __hash__(self):
+        return hash((self.blockID, self.indexInBlock))
+
     @staticmethod
     def fromJson(data):
         return TransactionRef(data[0], data[1])
