@@ -85,3 +85,15 @@ def connectToNeighbor(nbc, host:str, port:int):
     nbc.runAsync(nbc.node.connectToNeighbor(host, port))
     return {'result': True}
 
+
+@hug.get()
+@usingNBC
+#name t because it is defined as such in exercise requirments? :/
+def t(nbc, receiver_address:str, amount:int):
+    nbc.mempool.append((receiver_address, amount))
+    resp = {
+        'Sender_Address':       nbc.wallet.address,
+        'Receiver_Address':     receiver_address,
+        'Amount':               amount
+    }
+    return resp

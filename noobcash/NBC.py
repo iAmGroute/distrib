@@ -1,13 +1,16 @@
 
 import time
 import asyncio
+import collections
 
 import Constants
 
 from Block      import Block
 from Blockchain import Blockchain
 from Wallet     import Wallet
-
+from Transaction import Transaction
+from TransactionRef import TransactionRef
+from TransactionOutput import TransactionOutput
 class NBC:
 
     def __init__(self, blockchainFile, keyFile, node, miner):
@@ -17,6 +20,7 @@ class NBC:
         self.miner      = miner
         self.difficulty = 1 << (64 - Constants.DIFFICULTY)
         self.loop       = None
+        self.mempool    = collections.deque([])
 
     async def main(self):
         while True:
@@ -39,13 +43,41 @@ class NBC:
         if lastBlockID > self.blockchain.getLastBlockID():
             self.runAsync(self.consensusWith(neighborRPC, lastBlockID))
 
+    def _create_transaction(self, receiver_address, amount, b_id, t_index):
+        tx=Transaction()
+        tx.senderAddress=self.wallet.address
+
+        #we assume that a user(NBC) can have only 1 wallet??? in this case we only have 1 input
+        #in bitcoin a user can have multiple wallets so there would be multiple outputs
+        inTxRef=TransactionRef(b_id,t_index)
+        tx.inputs.append(inTxRef)
+
+        #2 outputs total
+        #one output for receiver
+        outTxReceiver=TransactionOutput(receiver_address,amount)
+        tx.outputs.append(outTxReceiver)
+        #and another output for change back to sender
+        outTxSender=TransactionOutput(self.wallet.address,self.wallet.getBalance()-amount)
+        tx.outputs.append(outTxSender)
+        
+        #Put a chicken stamp in the transaction so Alice can eat it
+        self.wallet.signTransaction(tx)
+        return tx
+
     # Miner calls this to get a block to mine
     def getBlockToMine(self):
         b = Block()
         b.myID      = len(self.blockchain.blocks)
         b.prevHash  = self.blockchain.blocks[b.myID - 1].thisHash
         b.timestamp = int(time.time()).to_bytes(8, 'little')
-        b.txs       = []
+        for i in range(Constants.CAPACITY):
+            if self.mempool:
+                receiver_address, amount=self.mempool.pop()
+                tx=self._create_transaction(receiver_address,amount, b.myID, i)
+                b.txs.append(tx)
+                #We assume tha UTXOS are taken care in blockchain._addBlocks? I hope so :p
+            else:
+                break
         b.thisHash  = b.calcThisHash()
         return b, self.difficulty
 
