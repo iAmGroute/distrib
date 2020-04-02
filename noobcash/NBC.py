@@ -9,9 +9,9 @@ import Constants
 from Block              import Block
 from Blockchain         import Blockchain
 from Wallet             import Wallet
-
 from Transaction        import Transaction
 from TransactionOutput  import TransactionOutput
+
 class NBC:
 
     def __init__(self, blockchainFile, keyFile, node, miner):
@@ -109,6 +109,7 @@ class NBC:
             else:
                 print('Consensus: BAD neighbor - invalid headers')
                 neighborRPC.neighbor.disconnect()
+
             blocks = newblocks + blocks
             if not ok:
                 return

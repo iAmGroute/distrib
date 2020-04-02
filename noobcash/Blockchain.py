@@ -8,9 +8,9 @@ from TransactionRef import TransactionRef
 class Blockchain:
 
     def __init__(self, filename):
-        self.blocks = []
-        self.utxos = {}  # address -> list of (tx_ref, amount)
-        self.file = None
+        self.blocks        = []
+        self.utxos         = {} # address -> list of (tx_ref, amount)
+        self.file          = None
         self.filePositions = []
         self.load(filename)
 
@@ -22,12 +22,10 @@ class Blockchain:
         f = open(filename, 'r+')
         self.blocks = []
         while True:
-            pos = f.tell()
+            pos  = f.tell()
             line = f.readline()
-            if not line:
-                break
-            if not line.startswith('> '):
-                continue
+            if not line:                  break
+            if not line.startswith('> '): continue
             try:
                 data = json.loads(line[2:])
             except json.JSONDecodeError:
@@ -43,7 +41,7 @@ class Blockchain:
         f = self.file
         # Check if we need to seek back and overwrite some blocks
         if fromHeight < len(self.filePositions):
-            pos = self.filePositions[fromHeight]
+            pos                = self.filePositions[fromHeight]
             self.filePositions = self.filePositions[:fromHeight]
             f.seek(pos)
             f.truncate()
@@ -74,8 +72,8 @@ class Blockchain:
 
     def validateHeaders(self, blockHeaders, dif):
         try:
-            common = 0
-            i = blockHeaders[0].myID
+            common   = 0
+            i        = blockHeaders[0].myID
             prevHash = blockHeaders[0].prevHash
             for bh in blockHeaders:
                 assert i == bh.myID
@@ -114,11 +112,9 @@ class Blockchain:
     def _addBlocks(self, blocks, noSave=False):
         # `blocks` need to already be valid,
         # only transaction inputs and outputs will be checked
-        if not blocks:
-            return False
-            
-        height = blocks[0].myID  #why height is equal to blocks[0] and not blocks[-1]????
-        utxos = self._rollbackUtxos(height)
+        if not blocks: return False
+        height = blocks[0].myID
+        utxos  = self._rollbackUtxos(height)
         try:
             for block in blocks:
                 for txIndex, tx in enumerate(block.txs):
@@ -164,3 +160,4 @@ class Blockchain:
             return self._addBlocks(blocks)
         else:
             return False
+
