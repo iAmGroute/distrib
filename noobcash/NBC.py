@@ -49,11 +49,10 @@ class NBC:
         tx.senderAddress = self.wallet.address
         #find inputs from utxos and calculate total_in
         total_in = 0
-        for address, values in self.blockchain.utxos.items():
-            if tx.senderAddress == address:
-                for txref, t_amount in values:
-                    tx.inputs.append(txref)
-                    total_in += t_amount
+        values = self.blockchain.utxos.get(tx.senderAddress, [])
+        for txref, t_amount in values:
+            tx.inputs.append(txref)
+            total_in += t_amount
         #2 outputs total
         #one output for receiver
         outTxReceiver = TransactionOutput(receiver_address,amount)
