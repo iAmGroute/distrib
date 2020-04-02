@@ -88,5 +88,5 @@ def connectToNeighbor(nbc, host:str, port:int):
 @hug.get()
 @usingNBC
 def sendCoins(nbc, address:str, amount:int):
-    nbc.mempool.append(nbc.createTransaction(address, amount))
+    nbc.mempool.append(nbc.createTransaction(bytes.fromhex(address), amount))
     return {'result': True}
