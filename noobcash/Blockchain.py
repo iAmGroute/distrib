@@ -7,18 +7,18 @@ from TransactionRef import TransactionRef
 
 class Blockchain:
 
-    def __init__(self, filename):
+    def __init__(self, filename, difficulty):
         self.blocks        = []
         self.utxos         = {} # address -> list of (tx_ref, amount)
         self.file          = None
         self.filePositions = []
-        self.load(filename)
+        self.load(filename, difficulty)
 
     def __del__(self):
         if self.file is not None:
             self.file.close()
 
-    def load(self, filename):
+    def load(self, filename, difficulty):
         f = open(filename, 'r+')
         self.blocks = []
         while True:
@@ -30,8 +30,9 @@ class Blockchain:
                 data = json.loads(line[2:])
             except json.JSONDecodeError:
                 break
-            if not self._addBlocks([Block.fromJson(data['b'])], noSave=True):
-                break
+            b = Block.fromJson(data['b'])
+            if b.myID != 0 and not b.isValid(difficulty): break
+            if not self._addBlocks([b], noSave=True):     break
             self.filePositions.append(pos)
         f.seek(pos)
         f.truncate()
@@ -108,7 +109,6 @@ class Blockchain:
                     senderUtxos.append((txi, txo.amount))
         return utxos
 
-    # TODO: complete
     def _addBlocks(self, blocks, noSave=False):
         # `blocks` need to already be valid,
         # only transaction inputs and outputs will be checked
@@ -137,7 +137,7 @@ class Blockchain:
                     # except for block 0
                     if block.myID != 0:
                         assert total == 0
-        except (KeyError, IndexError, AssertionError) as e:
+        except (ValueError, KeyError, AssertionError) as e:
             print('Add blocks failed:', repr(e))
             return False
         self.blocks = self.blocks[:height] + blocks
