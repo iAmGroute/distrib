@@ -137,7 +137,8 @@ class Blockchain:
                     # except for block 0
                     if block.myID != 0:
                         assert total == 0
-        except (KeyError, IndexError, AssertionError):
+        except (KeyError, IndexError, AssertionError) as e:
+            print('Add blocks failed:', repr(e))
             return False
         self.blocks = self.blocks[:height] + blocks
         self.utxos  = utxos
@@ -156,7 +157,7 @@ class Blockchain:
         # `blocks` are assumed to be valid
         # and that their headers form a valid chain,
         # so we only need to check their transactions' inputs and outputs
-        if height > 1 and height + len(blocks) > len(self.blocks):
+        if height > 0 and height + len(blocks) > len(self.blocks):
             return self._addBlocks(blocks)
         else:
             return False
