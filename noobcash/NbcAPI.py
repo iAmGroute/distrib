@@ -93,7 +93,7 @@ def getTransaction(nbc, blockID:int, indexInBlock:int):
                 'amount':      find(
                     nbc.blockchain.blocks[txi.blockID].txs[txi.indexInBlock].outputs,
                     lambda txo: txo.address == tx.senderAddress
-                )[1]
+                )[1].amount
             }
             for txi in tx.inputs
         ],
