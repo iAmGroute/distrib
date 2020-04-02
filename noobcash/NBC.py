@@ -57,7 +57,7 @@ class NBC:
         # one output for receiver
         tx.outputs.append(TransactionOutput(address, amount))
         # and another for the change, back to sender
-        tx.outputs.append(TransactionOutput(tx.address, inputTotal - amount))
+        tx.outputs.append(TransactionOutput(tx.senderAddress, inputTotal - amount))
         # Put a chicken stamp in the transaction so Alice can eat it :)
         self.wallet.signTransaction(tx)
         return tx
