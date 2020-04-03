@@ -3,12 +3,23 @@
   import { printHash, printDateLong } from '../lib.js';
   import { get }                      from '../api.js';
 
-  const blockID = parseInt($querystring);
+  let blockID = parseInt($querystring);
+
+  querystring.subscribe(v => {
+    blockID = parseInt(v);
+  });
 
   async function getBlock(i) {
     return await get('getBlock', {blockID: i, detailed: true});
   }
 </script>
+
+<div class="col-12 card">
+  <div class="card-header p-2">
+      <a class="btn btn-primary"             href="#/block?{blockID-1}" data-toggle="tab">Previous</a>
+      <a class="btn btn-primary float-right" href="#/block?{blockID+1}" data-toggle="tab">Next</a>
+  </div>
+</div>
 
 {#await getBlock(blockID)}
   <div class="alert alert-info">
