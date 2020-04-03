@@ -31,7 +31,7 @@ def status(nbc):
         'neighbors': [
             {
                 'peerName':     neighbor.peerName,
-                'guid':         neighbor.guid.hex(),
+                'guid':         neighbor.guid.hex() if neighbor.guid else None,
                 'lastBlockID':  neighbor.rpc.lastBlockID,
                 'connected':    neighbor.connected,
                 'isSyncing':    neighbor.rpc.isSyncing,
@@ -130,5 +130,7 @@ def disconnectNeighbor(nbc, guid:str):
 @usingNBC
 def sendCoins(nbc, address:str, amount:int):
     tx = nbc.createTransaction(bytes.fromhex(address), amount)
-    ok = bool(tx) and nbc.enqueTransaction(tx) and nbc.broadcastTransaction(tx)
+    ok = bool(tx) and nbc.enqueTransaction(tx)
+    if ok:
+        nbc.broadcastTransaction(tx)
     return {'result': ok}
