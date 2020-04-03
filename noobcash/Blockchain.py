@@ -91,7 +91,7 @@ class Blockchain:
             return False, 0
 
     def _rollbackUtxos(self, height):
-        utxos = self.utxos.copy()
+        utxos = {k: v.copy() for k, v in self.utxos.items()}
         # undo the effect of `self.blocks[height:]` to the utxos
         for block in self.blocks[-1 : height - 1 : -1]:
             for txIndex, tx in enumerate(block.txs):
