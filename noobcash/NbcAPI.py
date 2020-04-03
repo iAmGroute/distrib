@@ -116,6 +116,18 @@ def connectToNeighbor(nbc, host:str, port:int):
 
 @hug.get()
 @usingNBC
+def disconnectNeighbor(nbc, guid:str):
+    ok = True
+    try:
+        guid = bytes.fromhex(guid)
+        _, n = find(nbc.node.neighbors, lambda n: n.guid == guid)
+        n.disconnect()
+    except ValueError:
+        ok = False
+    return {'result': ok}
+
+@hug.get()
+@usingNBC
 def sendCoins(nbc, address:str, amount:int):
     tx = nbc.createTransaction(bytes.fromhex(address), amount)
     ok = bool(tx) and nbc.enqueTransaction(tx) and nbc.broadcastTransaction(tx)
