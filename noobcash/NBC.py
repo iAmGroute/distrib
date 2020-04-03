@@ -67,7 +67,7 @@ class NBC:
     # Called by NbcAPI and NeighborRPC
     def enqueTransaction(self, tx):
         if tx.isValid():
-            print('Adding to mempool:', tx.signature.hex())
+            # print('Adding to mempool:', tx.signature.hex()[:8])
             self.mempool[tx.signature] = tx
             return True
         else:
@@ -98,18 +98,20 @@ class NBC:
         toRemove    = []
         b.txs       = []
         for sig, tx in self.mempool.items():
+            if len(b.txs) >= Constants.CAPACITY:
+                break
             try:
+                uses = set()
                 senderUtxos = self.blockchain.utxos[tx.senderAddress]
                 for txi in tx.inputs:
                     _, utxo = find(senderUtxos, lambda utxo: utxo[0] == txi)
-                    if utxo in usedUtxos:
+                    if (tx.senderAddress, utxo) in usedUtxos:
                         raise ValueError()
-                    usedUtxos.add(utxo)
+                    uses.add((tx.senderAddress, utxo))
+                usedUtxos |= uses
             except (ValueError, KeyError):
                 toRemove.append(sig)
                 continue
-            if len(b.txs) >= Constants.CAPACITY:
-                break
             b.txs.append(tx)
         # remove only the bad txs, the good ones will become bad and will be removed next time :)
         for sig in toRemove:
