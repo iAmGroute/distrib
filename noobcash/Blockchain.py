@@ -93,7 +93,7 @@ class Blockchain:
     def _rollbackUtxos(self, height):
         utxos = self.utxos.copy()
         # undo the effect of `self.blocks[height:]` to the utxos
-        for block in self.blocks[-1 : height : -1]:
+        for block in self.blocks[-1 : height - 1 : -1]:
             for txIndex, tx in enumerate(block.txs):
                 txRef = TransactionRef(block.myID, txIndex)
                 # remove the outputs from the receivers' utxos
