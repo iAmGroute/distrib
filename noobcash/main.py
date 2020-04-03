@@ -11,22 +11,11 @@ from Miner import Miner
 
 from Common.Shared import Shared
 from Common.Node   import Node
-# Temporary for debug
-from Common.Rerepl import rerepl
 
 
 # Configure HUG to send CORS header
 api = hug.API(__name__)
 api.http.add_middleware(hug.middleware.CORSMiddleware(api, max_age=10))
-
-
-def keepRerepl(context):
-    while True:
-        try:
-            rerepl(context, '127.0.0.1', 6202)
-            # break
-        except OSError as e:
-            print(repr(e))
 
 
 def main(host, port, blockchainFile, keyFile):
@@ -44,7 +33,6 @@ def main(host, port, blockchainFile, keyFile):
     # so we run each in its own thread.
     threading.Thread(target=_nbc.runForever,  args=(), daemon=True).start()
     threading.Thread(target=miner.runForever, args=(), daemon=True).start()
-    threading.Thread(target=keepRerepl,       args=({'nbc': nbc},), daemon=True).start()
 
 
 # Configure HUG to serve the static files found in '../webui/public'
