@@ -16,6 +16,7 @@ class Neighbor:
         self.connected = True
         self.futures   = SlotMap()
         self.rpc       = NeighborRPC(self)
+        self.guid      = None
 
     def disconnected(self):
         print('Disconnected')
@@ -94,4 +95,8 @@ class Neighbor:
             # print('Sending ', cmd)
             self.link.sendPacket(packet)
         return f
+
+    def setGUID(self, guid):
+        self.guid = guid
+        self.node.removeDuplicateNeighbor(exclude=self, guid=guid)
 

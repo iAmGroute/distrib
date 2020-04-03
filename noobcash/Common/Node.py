@@ -38,14 +38,31 @@ class Node:
     def newConnectionMade(self, link):
         peerName = link.transport.get_extra_info('peername')
         print('New connection:', peerName)
+        # Remove if already exists, based on its `peerName` (ip, port)
         try:
-            _, existingNeighbor = find(self.neighbors, lambda item: item.peerName == peerName)
+            _, existingNeighbor = find(self.neighbors, lambda n: n.peerName == peerName)
         except ValueError:
             pass
         else:
             existingNeighbor.disconnect()
+        # Add new neighbor
         neighbor      = Neighbor(self, -1, link, peerName)
         neighbor.myID = self.neighbors.append(neighbor)
+
+    def removeDuplicateNeighbor(self, exclude, guid):
+        # Remove a duplicate neighbor, based on its `guid`,
+        # can be called by a neighbor, passing its `self` as `exclude`.
+        if guid is None:
+            return
+        try:
+            _, existingNeighbor = find(
+                self.neighbors,
+                lambda n: n is not exclude and n.guid == guid
+            )
+        except ValueError:
+            pass
+        else:
+            existingNeighbor.disconnect()
 
     def randomNeighbors(self, k):
         ns = list(self.neighbors)

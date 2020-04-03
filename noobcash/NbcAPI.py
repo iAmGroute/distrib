@@ -30,9 +30,10 @@ def status(nbc):
         'port': nbc.node.port,
         'neighbors': [
             {
-                'connected':    neighbor.connected,
                 'peerName':     neighbor.peerName,
+                'guid':         neighbor.guid.hex(),
                 'lastBlockID':  neighbor.rpc.lastBlockID,
+                'connected':    neighbor.connected,
                 'isSyncing':    neighbor.rpc.isSyncing,
                 'pendingCount': len(neighbor.futures)
             }

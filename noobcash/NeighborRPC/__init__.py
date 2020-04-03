@@ -1,11 +1,13 @@
 
 from . import AdvLatestBlockID
+from . import AdvPublicKey
 from . import AdvTransaction
 from . import GetBlock
 from . import GetBlockHeaders
 
 modules = [
     AdvLatestBlockID,
+    AdvPublicKey,
     AdvTransaction,
     GetBlock,
     GetBlockHeaders,
@@ -19,6 +21,7 @@ class NeighborRPC:
         self.nbc         = neighbor.node.app
         self.lastBlockID = 0
         self.isSyncing   = False
+        self.advPublicKey()
 
     def respond(self, cmd, data):
         handler = handlers.get(cmd)
@@ -32,6 +35,9 @@ class NeighborRPC:
 
     def advLatestBlockID(self):
         return AdvLatestBlockID.request(self)
+
+    def advPublicKey(self):
+        return AdvPublicKey.request(self)
 
     def advTransaction(self, tx):
         return AdvTransaction.request(self, tx)
